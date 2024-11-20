@@ -9,7 +9,6 @@ public class Inventory : MonoBehaviour
 
     [SerializeField] private SelectedItemPanel selectedItemPanel;
 
-
     // Array de slots do inventário
     [SerializeField] private InventorySlot[] inventorySlots;
     // Array de slots de equipamento
@@ -29,7 +28,6 @@ public class Inventory : MonoBehaviour
     private void Awake()
     {
         Singleton = this; // Define esta instância como o Singleton
-        // Adiciona evento ao botão para gerar itens
         selectedItemPanel.UpdatePanel(null); // Atualiza o painel
         giveItmBtn.onClick.AddListener(delegate { SpawnInventoryItem(); });
     }
@@ -37,6 +35,7 @@ public class Inventory : MonoBehaviour
     // Propriedade para obter o item selecionado
     public InventoryItem SelectedItem => selectedItem;
 
+    // Seleciona ou troca um item
     public void SelectItem(InventoryItem item)
     {
         if (selectedItem != null)
@@ -53,9 +52,11 @@ public class Inventory : MonoBehaviour
         else
         {
             selectedItem = item;
-            selectedItem.activeSlot.UpdateCollor(true); // Atualiza a cor para indicar seleção
             selectedItemPanel.UpdatePanel(selectedItem.myItem);
         }
+
+        // Atualiza as cores após a seleção
+        UpdateCollorSelectedItem();
     }
 
     // Deseleciona o item atual
@@ -63,11 +64,36 @@ public class Inventory : MonoBehaviour
     {
         if (selectedItem != null)
         {
-            selectedItem.activeSlot.UpdateCollor(false); // Atualiza a cor para cinza
             selectedItem = null;
             selectedItemPanel.UpdatePanel(null);
         }
+
+        // Atualiza as cores após a deseleção
+        UpdateCollorSelectedItem();
     }
+
+    // Atualiza as cores dos slots com base no item selecionado
+    public void UpdateCollorSelectedItem()
+    {
+        // Atualiza todos os slots do inventário para cinza
+        foreach (var slot in inventorySlots)
+        {
+            slot.UpdateCollor(false); // Define todos os slots como cinza
+        }
+
+        // Atualiza todos os slots de equipamento para cinza
+        foreach (var slot in equipmentSlots)
+        {
+            slot.UpdateCollor(false); // Define todos os slots como cinza
+        }
+
+        // Se houver um item selecionado, destaca o slot ativo
+        if (selectedItem != null && selectedItem.activeSlot != null)
+        {
+            selectedItem.activeSlot.UpdateCollor(true); // Define como verde
+        }
+    }
+
     public bool TagVerify(InventoryItem ItemOrigem, InventorySlot slotDestino)
     {
         if (slotDestino.myTag == SlotTag.None || ItemOrigem.myItem.itemTag == slotDestino.myTag)
@@ -80,16 +106,12 @@ public class Inventory : MonoBehaviour
     // Troca dois itens de posição
     private void SwapItems(InventoryItem item1, InventoryItem item2)
     {
-        if (TagVerify(item1 , item2.activeSlot) && TagVerify(item2, item1.activeSlot))
+        if (TagVerify(item1, item2.activeSlot) && TagVerify(item2, item1.activeSlot))
         {
-            //SelectedItem.activeSlot.image.color = Color.gray;
-            // Obtém os slots dos dois itens
             InventorySlot slot1 = item1.activeSlot;
             InventorySlot slot2 = item2.activeSlot;
 
-            // Define o item2 no slot do item1
             slot1.SetItem(item2);
-            // Define o item1 no slot do item2
             slot2.SetItem(item1);
             DeselectItem();
             return;
@@ -101,25 +123,20 @@ public class Inventory : MonoBehaviour
     // Cria um novo item no inventário
     public void SpawnInventoryItem(Item item = null)
     {
-        // Se nenhum item for especificado, escolhe um aleatório
         Item _item = item ?? PickRandomItem();
 
-        // Procura o primeiro slot vazio no inventário
         foreach (var slot in inventorySlots)
         {
-            if (slot.myItem == null) // Se o slot estiver vazio
+            if (slot.myItem == null)
             {
-                // Instancia o item no slot e inicializa
                 Instantiate(itemPrefab, slot.transform).Initialize(_item, slot);
-                break; // Para após criar o item
+                break;
             }
         }
     }
 
-    // Retorna um item aleatório da lista
     private Item PickRandomItem()
     {
-        // Escolhe um índice aleatório e retorna o item correspondente
         return items[Random.Range(0, items.Length)];
     }
 }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 363b423706a68e448aef7e91a1860ce1
+guid: 41b8bc702f561d2428cbcd6f3efd235d
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -126,28 +126,7 @@ TextureImporter:
       name: JoyStick_1
       rect:
         serializedVersion: 2
-        x: 21
-        y: 5
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5c618ec594b4797438c8ff03c51d9c80
-      internalID: -1192728973
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: JoyStick_0
-      rect:
-        serializedVersion: 2
-        x: 0
+        x: 16
         y: 0
         width: 16
         height: 16
@@ -158,8 +137,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 19399821e9bfce04da840a8ecf60728f
-      internalID: 1074139677
+      spriteID: 5c618ec594b4797438c8ff03c51d9c80
+      internalID: -1192728973
       vertices: []
       indices: 
       edges: []
