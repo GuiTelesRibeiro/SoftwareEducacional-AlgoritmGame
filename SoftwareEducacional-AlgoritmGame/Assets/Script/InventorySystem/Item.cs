@@ -6,4 +6,6 @@ public class Item : ScriptableObject
 {
     public Sprite sprite;
     public SlotTag itemTag;
+    public string nomeItem;
+    public string descricao;
 }

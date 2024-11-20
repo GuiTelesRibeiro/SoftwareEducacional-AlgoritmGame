@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: -1207651179, guid: a7fe10ea048614b4e8791835516992f8, type: 3}
   itemTag: 1
+  nomeItem: Capacete Branco
+  descricao: "Nao parece um capacete, mas \xE9, confia!!"

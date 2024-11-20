@@ -67,6 +67,7 @@ public class DialogueManager : MonoBehaviour
         else
         {
             ZeroText();
+            CanvasController.Singleton.DefaultPainels();
         }
     }
 

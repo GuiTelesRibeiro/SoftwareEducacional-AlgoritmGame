@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 // Classe que representa um slot de inventário
@@ -8,6 +9,20 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
     public InventoryItem myItem { get; set; }
     // Tag para categorizar o slot (exemplo: arma, armadura, etc.)
     public SlotTag myTag;
+
+    private Image image;
+
+    private void Awake()
+    {
+        image = GetComponent<Image>();
+        UpdateCollor(false); // Inicializa a cor como inativa
+    }
+
+    public void UpdateCollor(bool isActive)
+    {
+        // Atualiza a cor do slot com base no estado
+        image.color = isActive ? Color.green : Color.gray;
+    }
 
     // Método chamado ao clicar no slot
     public void OnPointerClick(PointerEventData eventData)
@@ -54,7 +69,6 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
 
         // Atribui o novo item a este slot
         myItem = item;
-        // Atualiza o slot ativo no item
         myItem.activeSlot = this;
 
         // Ajusta a posição do item para ser filho deste slot

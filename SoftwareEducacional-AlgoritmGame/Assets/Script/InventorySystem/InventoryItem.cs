@@ -8,9 +8,6 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler
     // Referência para o ícone do item
     Image itemIcon;
 
-    // Referência para o destaque visual de seleção
-    Image selectionHighlight;
-
     // Dados do item (exemplo: nome, sprite, etc.)
     public Item myItem { get; set; }
 
@@ -22,15 +19,6 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler
     {
         // Obtém o componente de imagem para exibir o ícone do item
         itemIcon = GetComponent<Image>();
-
-        // Tenta localizar o elemento visual de destaque dentro do prefab
-        selectionHighlight = transform.Find("SelectionHighlight")?.GetComponent<Image>();
-
-        // Se o destaque foi encontrado, o desativa por padrão
-        if (selectionHighlight != null)
-        {
-            selectionHighlight.gameObject.SetActive(false);
-        }
     }
 
     // Inicializa o item no slot específico
@@ -67,12 +55,4 @@ public class InventoryItem : MonoBehaviour, IPointerClickHandler
     }
 
     // Altera o estado visual do item quando ele é selecionado ou desmarcado
-    public void SetSelected(bool isSelected)
-    {
-        // Ativa ou desativa o destaque visual com base no estado
-        if (selectionHighlight != null)
-        {
-            selectionHighlight.gameObject.SetActive(isSelected);
-        }
-    }
 }

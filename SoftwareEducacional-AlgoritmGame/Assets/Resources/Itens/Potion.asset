@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: -1021717030, guid: 054303d9c6efd8442b5bab5d8e96564c, type: 3}
   itemTag: 0
+  nomeItem: "Po\xE7\xE3o"
+  descricao: "deve fazer alguma coisa, se nao for algo bom, deve te dar uma pequena
+    dor de barriga ent\xE3o!"

@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 1936437644, guid: a7fe10ea048614b4e8791835516992f8, type: 3}
   itemTag: 1
+  nomeItem: Capacete azul
+  descricao: igual ao branco, mas azul, continuam sendo capacetes
