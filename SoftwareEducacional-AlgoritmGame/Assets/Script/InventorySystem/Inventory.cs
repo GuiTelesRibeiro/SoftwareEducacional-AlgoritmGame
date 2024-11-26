@@ -103,7 +103,7 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
-    // Troca dois itens de posição
+
     private void SwapItems(InventoryItem item1, InventoryItem item2)
     {
         if (TagVerify(item1, item2.activeSlot) && TagVerify(item2, item1.activeSlot))
@@ -120,7 +120,6 @@ public class Inventory : MonoBehaviour
         DeselectItem();
     }
 
-    // Cria um novo item no inventário
     public void SpawnInventoryItem(Item item = null)
     {
         Item _item = item ?? PickRandomItem();

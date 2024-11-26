@@ -10,6 +10,7 @@ public class CanvasController : MonoBehaviour
     [SerializeField] GameObject InventoryPanel;
     [SerializeField] GameObject UiPanel;
     [SerializeField] GameObject MenuPanel;
+    [SerializeField] GameObject TestInputDataPanel;
     
     void Awake()
     {
@@ -29,6 +30,7 @@ public class CanvasController : MonoBehaviour
         InventoryPanel.SetActive(false);
         UiPanel.SetActive(false);
         MenuPanel.SetActive(false);
+        TestInputDataPanel.SetActive(false);
 
     }
     void Update()
@@ -50,6 +52,12 @@ public class CanvasController : MonoBehaviour
     {
         ResetPanel();
         MenuPanel.SetActive(true);
+    }
+
+    public void OpenTestInputPanel()
+    {
+        ResetPanel();
+        TestInputDataPanel.SetActive(true);
     }
 
     public void DefaultPainels()
