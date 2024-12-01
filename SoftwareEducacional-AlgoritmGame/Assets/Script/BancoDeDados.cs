@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Data;
 using Mono.Data.Sqlite;
 using System.Globalization;
+using UnityEngine.Networking;
 
 public class BancoDeDados
 {
@@ -18,10 +19,21 @@ public class BancoDeDados
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                // No Android, StreamingAssets usa WWW para copiar
-                WWW reader = new WWW(origem);
-                while (!reader.isDone) { }
-                System.IO.File.WriteAllBytes(destino, reader.bytes);
+                // No Android, StreamingAssets usa UnityWebRequest para copiar
+                using (UnityWebRequest www = UnityWebRequest.Get(origem))
+                {
+                    www.SendWebRequest();
+                    while (!www.isDone) { }
+
+                    if (www.result == UnityWebRequest.Result.Success)
+                    {
+                        System.IO.File.WriteAllBytes(destino, www.downloadHandler.data);
+                    }
+                    else
+                    {
+                        Debug.LogError($"Erro ao copiar banco de dados: {www.error}");
+                    }
+                }
             }
             else
             {

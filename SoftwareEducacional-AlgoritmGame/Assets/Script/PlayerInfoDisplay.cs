@@ -22,8 +22,8 @@ public class PlayerInfoDisplay : MonoBehaviour
         if (dados.Read())
         {
             // Exibe as informações do jogador nos campos de texto
-            playerNameText.text = $"Nome: {dados["Player_Name"].ToString()}";
-            playerAgeText.text = $"Idade: {dados["Player_Idade"].ToString()}";
+            playerNameText.text = $"{dados["Player_Name"].ToString()}.";
+            playerAgeText.text = $"{dados["Player_Idade"].ToString()} anos.";
         }
         else
         {
