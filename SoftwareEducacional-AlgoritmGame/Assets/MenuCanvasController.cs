@@ -18,6 +18,7 @@ public class MenuCanvasController : MonoBehaviour
         if (ExistAccount())
         {
             OpenMenu();
+            Debug.Log("CONTA ENCONTRADA");
             return;
         }
         OpenCreateAccount();

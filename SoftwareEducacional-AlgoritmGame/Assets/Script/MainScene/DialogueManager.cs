@@ -28,7 +28,7 @@ public class DialogueManager : MonoBehaviour
             StartCoroutine(Typing());
         }
 
-        
+
     }
 
     public void ZeroText()
@@ -36,15 +36,9 @@ public class DialogueManager : MonoBehaviour
         dialogueText.text = "";
         index = 0;
         if (dialoguePainel)
-        {
             dialoguePainel.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("dialoguePainel n existe");
-        }
-        
-        contButton.SetActive(false); // Desativa o botão de continuar ao fechar o diálogo
+        if(contButton)
+            contButton.SetActive(false); // Desativa o botão de continuar ao fechar o diálogo
         dialogue = null; // Reseta o diálogo para evitar referências pendentes
         isDialogueActive = false; // Marca o diálogo como inativo
     }

@@ -125,7 +125,7 @@ public class Inventory : MonoBehaviour
         Debug.Log("Troca de itens nao permitida. Tags incompativeis");
         DeselectItem();
     }
-    private void GetInventoryItemIds()
+    private int[] GetInventoryItemIds()
     {
         // Inicializa o vetor com o tamanho do número de slots de inventário
         itemIds = new int[inventorySlots.Length];
@@ -145,6 +145,7 @@ public class Inventory : MonoBehaviour
                 itemIds[i] = 0;
             }
         }
+            return itemIds;
     }
     public void SpawnInventoryItemById(int itemId)
     {
@@ -182,6 +183,15 @@ public class Inventory : MonoBehaviour
             }
         }
         return null; // Retorna nulo se o item não for encontrado
+    }
+
+    public void SetInventoryBanco(int ID)
+    {
+
+    }
+    public void GetInventoryBanco(int ID)
+    {
+
     }
 
 }

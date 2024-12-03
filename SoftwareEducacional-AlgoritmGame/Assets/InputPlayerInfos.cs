@@ -7,12 +7,25 @@ public class InputPlayerInfos : MonoBehaviour
 {
     [SerializeField] TMP_InputField userName; // Campo para o nome do jogador
     [SerializeField] TMP_InputField idade;   // Campo para a idade do jogador
+    [SerializeField] TMP_Text buttonText;
+    [SerializeField]  MenuCanvasController menuCanvasController;
     //[SerializeField] TMP_InputField playerId; // Campo para o ID do jogador
 
     // Instância do banco de dados
     private BancoDeDados bancoDeDados = new BancoDeDados();
 
     // Função chamada quando o usuário envia as informações
+
+    public void CreateAccount()
+    {
+        if (userName.text == "" || idade.text == "")
+        {
+            buttonText.text = "Não deixe campos vazios";
+            return;
+        }
+        SubmitInfo();
+        menuCanvasController.OpenMenu();
+    }
     public void SubmitInfo()
     {
         // Obtém os valores dos campos de entrada
