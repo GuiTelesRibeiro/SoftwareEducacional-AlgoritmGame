@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e552ef094e9df484592e433ec8dcda9c, type: 3}
-  m_Name: Potion
+  m_Name: "Chip N\xEDvel 1"
   m_EditorClassIdentifier: 
-  sprite: {fileID: -1021717030, guid: 054303d9c6efd8442b5bab5d8e96564c, type: 3}
-  ID: 3
+  sprite: {fileID: -33024896, guid: 6502f47fea845684a8d967783e8afde5, type: 3}
+  itemID: 1
   itemTag: 0
-  nomeItem: "Po\xE7\xE3o"
-  descricao: "deve fazer alguma coisa, se nao for algo bom, deve te dar uma pequena
-    dor de barriga ent\xE3o!"
+  nomeItem: "Chip N\xEDvel 1"
+  descricao: "Chip muito tecnol\xF3gico, deve servir para calculos de navega\xE7\xE3o"

@@ -5,7 +5,7 @@ public enum SlotTag { None, Head, Chest, Legs, Feet }
 public class Item : ScriptableObject
 {
     public Sprite sprite;
-    public int ID;
+    public int itemID;
     public SlotTag itemTag;
     public string nomeItem;
     public string descricao;

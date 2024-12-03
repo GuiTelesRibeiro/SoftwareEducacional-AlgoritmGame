@@ -35,7 +35,15 @@ public class DialogueManager : MonoBehaviour
     {
         dialogueText.text = "";
         index = 0;
-        dialoguePainel.SetActive(false);
+        if (dialoguePainel)
+        {
+            dialoguePainel.SetActive(false);
+        }
+        else
+        {
+            Debug.LogError("dialoguePainel n existe");
+        }
+        
         contButton.SetActive(false); // Desativa o botão de continuar ao fechar o diálogo
         dialogue = null; // Reseta o diálogo para evitar referências pendentes
         isDialogueActive = false; // Marca o diálogo como inativo

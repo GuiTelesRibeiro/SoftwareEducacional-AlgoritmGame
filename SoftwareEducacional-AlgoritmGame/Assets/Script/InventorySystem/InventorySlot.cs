@@ -15,12 +15,12 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
     private void Awake()
     {
         image = GetComponent<Image>();
-        image.color = Color.gray;
+        image.color = new Color(134f / 255f, 171f / 255f, 243f / 255f);  // #86ABF3
     }
 
     public void UpdateCollor(bool isActive)
     {
-        image.color = isActive ? Color.green : Color.gray;
+        image.color = isActive ? new Color(252f / 255f, 143f / 255f, 84f / 255f) : new Color(134f / 255f, 171f / 255f, 243f / 255f);  // #FC8F54 e #86ABF3
     }
 
 

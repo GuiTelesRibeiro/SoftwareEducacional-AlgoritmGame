@@ -112,4 +112,57 @@ public class BancoDeDados
             BancoDados.Close();
         }
     }
+    public void SalvarInventario(int id, int[] inventario)
+    {
+        BancoDados = criarEAbrirBancoDeDados();
+        IDbCommand ComandoSalvar = BancoDados.CreateCommand();
+
+        // Converte o array de inteiros para um array de bytes
+        List<byte> blob = new List<byte>();
+        foreach (int numero in inventario)
+        {
+            blob.AddRange(System.BitConverter.GetBytes(numero));
+        }
+
+        ComandoSalvar.CommandText = $@"
+        UPDATE Player
+        SET Player_Inventory__Items = @Inventory
+        WHERE id_Player = {id};";
+
+        IDbDataParameter parametro = ComandoSalvar.CreateParameter();
+        parametro.ParameterName = "@Inventory";
+        parametro.Value = blob.ToArray(); // Passa o array de bytes como parâmetro
+        ComandoSalvar.Parameters.Add(parametro);
+
+        ComandoSalvar.ExecuteNonQuery();
+        BancoDados.Close();
+    }
+
+    public int[] LerInventario(int id)
+    {
+        BancoDados = criarEAbrirBancoDeDados();
+        IDbCommand ComandoLer = BancoDados.CreateCommand();
+        ComandoLer.CommandText = $"SELECT Player_Inventory__Items FROM Player WHERE id_Player = {id};";
+
+        IDataReader reader = ComandoLer.ExecuteReader();
+        if (reader.Read() && !reader.IsDBNull(0))
+        {
+            // Lê os bytes do BLOB
+            byte[] blob = (byte[])reader["Player_Inventory__Items"];
+            List<int> inventario = new List<int>();
+
+            for (int i = 0; i < blob.Length; i += 4) // Um int ocupa 4 bytes
+            {
+                inventario.Add(System.BitConverter.ToInt32(blob, i));
+            }
+
+            reader.Close();
+            BancoDados.Close();
+            return inventario.ToArray();
+        }
+
+        reader.Close();
+        BancoDados.Close();
+        return new int[0]; // Retorna um array vazio se não encontrar dados
+    }
 }

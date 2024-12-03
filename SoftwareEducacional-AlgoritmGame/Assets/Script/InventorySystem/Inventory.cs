@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,12 +15,13 @@ public class Inventory : MonoBehaviour
     // Array de slots de equipamento
     [SerializeField] private InventorySlot[] equipmentSlots;
 
-    // Botão para gerar itens
-    [SerializeField] private Button giveItmBtn;
     // Prefab usado para criar novos itens
     [SerializeField] private InventoryItem itemPrefab;
+
     // Lista de itens disponíveis para spawn
-    [SerializeField] private Item[] items;
+    [SerializeField] private Item[] allItemsList;
+
+    public int[] itemIds;
 
     // Item atualmente selecionado pelo jogador
     private InventoryItem selectedItem;
@@ -29,7 +31,11 @@ public class Inventory : MonoBehaviour
     {
         Singleton = this; // Define esta instância como o Singleton
         selectedItemPanel.UpdatePanel(null); // Atualiza o painel
-        giveItmBtn.onClick.AddListener(delegate { SpawnInventoryItem(); });
+    }
+
+    private void Update()
+    {
+        GetInventoryItemIds();
     }
 
     // Propriedade para obter o item selecionado
@@ -119,23 +125,63 @@ public class Inventory : MonoBehaviour
         Debug.Log("Troca de itens nao permitida. Tags incompativeis");
         DeselectItem();
     }
-
-    public void SpawnInventoryItem(Item item = null)
+    private void GetInventoryItemIds()
     {
-        Item _item = item ?? PickRandomItem();
+        // Inicializa o vetor com o tamanho do número de slots de inventário
+        itemIds = new int[inventorySlots.Length];
 
+        // Itera sobre cada slot do inventário
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            // Verifica se o slot contém um item
+            if (inventorySlots[i].myItem != null)
+            {
+                // Armazena o ID do item no vetor
+                itemIds[i] = inventorySlots[i].myItem.myItem.itemID; 
+            }
+            else
+            {
+                // Se não houver item, coloca 0
+                itemIds[i] = 0;
+            }
+        }
+    }
+    public void SpawnInventoryItemById(int itemId)
+    {
+        // Busca o item com base no ID fornecido
+        Item itemToSpawn = FindItemById(itemId);
+
+        // Verifica se o item foi encontrado
+        if (itemToSpawn == null)
+        {
+            Debug.LogError($"Item com ID {itemId} não encontrado. Certifique-se de que o ID seja válido.");
+            return;
+        }
+
+        // Itera pelos slots para encontrar o primeiro slot vazio
         foreach (var slot in inventorySlots)
         {
             if (slot.myItem == null)
             {
-                Instantiate(itemPrefab, slot.transform).Initialize(_item, slot);
-                break;
+                Instantiate(itemPrefab, slot.transform).Initialize(itemToSpawn, slot);
+                return;
             }
         }
+
+        Debug.LogWarning("Inventário cheio. Não foi possível adicionar o item.");
     }
 
-    private Item PickRandomItem()
+    // Função para encontrar um item pelo ID na lista
+    private Item FindItemById(int itemId)
     {
-        return items[Random.Range(0, items.Length)];
+        foreach (var item in allItemsList)
+        {
+            if (item.itemID == itemId)
+            {
+                return item;
+            }
+        }
+        return null; // Retorna nulo se o item não for encontrado
     }
+
 }

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e552ef094e9df484592e433ec8dcda9c, type: 3}
+  m_Name: Filtro De Ar
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 188904502, guid: 6502f47fea845684a8d967783e8afde5, type: 3}
+  itemID: 4
+  itemTag: 0
+  nomeItem: Filtro de Ar
+  descricao: "No espa\xE7o, ter um desse \xE9 muito util, tente coloca-lo na sala
+    de vida"
