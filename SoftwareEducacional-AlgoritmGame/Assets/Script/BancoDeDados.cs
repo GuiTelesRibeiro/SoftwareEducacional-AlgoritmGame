@@ -42,6 +42,7 @@ public class BancoDeDados
             }
         }
 
+        Debug.Log($"{destino}");
         return destino;
     }
 
