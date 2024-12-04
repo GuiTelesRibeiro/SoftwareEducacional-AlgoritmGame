@@ -42,7 +42,7 @@ public partial class @Actions: IInputActionCollection2, IDisposable
                     ""id"": ""8ec37be2-540e-4020-aeba-95360b60d27d"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""initialStateCheck"": false
                 }
             ],
@@ -117,7 +117,7 @@ public partial class @Actions: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""790b052b-ea41-4bea-8f02-2996183af7d6"",
                     ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interactions"",
@@ -128,7 +128,7 @@ public partial class @Actions: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""fbd9135f-c80a-4663-b58a-b1ed26b5847f"",
                     ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interactions"",

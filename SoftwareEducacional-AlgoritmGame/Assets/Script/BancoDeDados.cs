@@ -9,7 +9,6 @@ using UnityEngine.Networking;
 public class BancoDeDados
 {
     private IDbConnection BancoDados;
-
     private string ObterCaminhoBanco()
     {
         string origem = System.IO.Path.Combine(Application.streamingAssetsPath, "DB.db");
@@ -19,7 +18,6 @@ public class BancoDeDados
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                // No Android, StreamingAssets usa UnityWebRequest para copiar
                 using (UnityWebRequest www = UnityWebRequest.Get(origem))
                 {
                     www.SendWebRequest();
@@ -52,7 +50,6 @@ public class BancoDeDados
         string idburi = $"URI=file:{caminhoBanco}";
         IDbConnection conexaoBanco = new SqliteConnection(idburi);
         conexaoBanco.Open();
-
         using (var comandoCriarTabelas = conexaoBanco.CreateCommand())
         {
             comandoCriarTabelas.CommandText = @"
@@ -64,23 +61,17 @@ public class BancoDeDados
             );";
             comandoCriarTabelas.ExecuteNonQuery();
         }
-
         return conexaoBanco;
     }
-
 
     public void InserirOuAtualizarPlayer(int id, string nome, int idade)
     {
         BancoDados = criarEAbrirBancoDeDados();
         IDbCommand InserOuAtualizaDados = BancoDados.CreateCommand();
-
-        // Verifica se o jogador já existe
         InserOuAtualizaDados.CommandText = $"SELECT COUNT(*) FROM Player WHERE id_Player = {id};";
         int count = int.Parse(InserOuAtualizaDados.ExecuteScalar().ToString());
-
         if (count > 0)
         {
-            // Atualiza o jogador existente
             InserOuAtualizaDados.CommandText = $@"
                 UPDATE Player
                 SET Player_Name = '{nome}', Player_Idade = {idade}
@@ -88,7 +79,6 @@ public class BancoDeDados
         }
         else
         {
-            // Insere um novo jogador
             InserOuAtualizaDados.CommandText = $@"
                 INSERT INTO Player (id_Player, Player_Name, Player_Idade)
                 VALUES ({id}, '{nome}', {idade});";

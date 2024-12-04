@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
     public void SetMoviment(InputAction.CallbackContext value)
     {
         move = value.ReadValue<Vector2>();
-        Debug.Log("Input recebido no Player: " + move);
+        //Debug.Log("Input recebido no Player: " + move);
 
         // Enviar movimento ao controlador de animação
         if (animController != null)

@@ -12,19 +12,27 @@ public class DialogueManager : MonoBehaviour
 
     public GameObject contButton;
     public float wordSpeed;
-    //private bool playerIsClose;
-    private bool isDialogueActive; // Indica se um diálogo está ativo
+    private bool isInteractionActive; // Indica se uma interaçao está ativa
 
     private NPC currentNPC; // NPC com o qual o jogador está interagindo
+    private Mission currentMission;
 
+
+    public void OpenMission()
+    {
+        if(currentMission != null && !isInteractionActive)
+        {
+            currentMission.Interaction();
+        }
+    }
     public void OpenDialogue()
     {
 
-        if (currentNPC != null && !isDialogueActive)
+        if (currentNPC != null && !isInteractionActive)
         {
             dialogue = currentNPC.dialogue; // Pega o diálogo do NPC atual
             dialoguePainel.SetActive(true);
-            isDialogueActive = true; // Marca o diálogo como ativo
+            isInteractionActive = true; // Marca o diálogo como ativo
             StartCoroutine(Typing());
         }
 
@@ -38,15 +46,15 @@ public class DialogueManager : MonoBehaviour
         if (dialoguePainel)
             dialoguePainel.SetActive(false);
         if(contButton)
-            contButton.SetActive(false); // Desativa o botão de continuar ao fechar o diálogo
-        dialogue = null; // Reseta o diálogo para evitar referências pendentes
-        isDialogueActive = false; // Marca o diálogo como inativo
+            contButton.SetActive(false);
+        dialogue = null;
+        isInteractionActive = false;
     }
 
     IEnumerator Typing()
     {
-        dialogueText.text = ""; // Garante que o texto seja limpo antes de começar a exibir
-        contButton.SetActive(false); // Desativa o botão enquanto o texto está sendo exibido
+        dialogueText.text = "";
+        contButton.SetActive(false);
 
         foreach (char letter in dialogue[index].ToCharArray())
         {
@@ -54,12 +62,12 @@ public class DialogueManager : MonoBehaviour
             yield return new WaitForSeconds(wordSpeed);
         }
 
-        contButton.SetActive(true); // Ativa o botão de continuar após exibir todo o texto
+        contButton.SetActive(true);
     }
 
     public void NextLine()
     {
-        contButton.SetActive(false); // Desativa o botão antes de exibir a próxima linha
+        contButton.SetActive(false);
 
         if (index < dialogue.Length - 1)
         {
@@ -77,8 +85,13 @@ public class DialogueManager : MonoBehaviour
     {
         if (collision.CompareTag("NPC"))
         {
-            currentNPC = collision.GetComponent<NPC>(); // Pega o script NPC do objeto com o qual o jogador está em contato
-            //playerIsClose = true;
+            Debug.Log("NPC");
+            currentNPC = collision.GetComponent<NPC>();
+        }
+        if (collision.CompareTag("Mission"))
+        {
+            Debug.Log("Mission");
+            currentMission = collision.GetComponent<Mission>();
         }
     }
 
@@ -86,9 +99,14 @@ public class DialogueManager : MonoBehaviour
     {
         if (collision.CompareTag("NPC"))
         {
-            //playerIsClose = false;
-            currentNPC = null; // Libera a referência ao NPC atual
-            ZeroText(); // Fecha o painel quando o jogador sai do alcance
+            Debug.Log("NPC");
+            currentNPC = null;
+            ZeroText();
+        }
+        if (collision.CompareTag("Mission"))
+        {
+            Debug.Log("Mission");
+            currentMission =null;
         }
     }
 }

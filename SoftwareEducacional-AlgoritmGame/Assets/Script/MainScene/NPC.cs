@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class NPC : MonoBehaviour
 {
-    public string[] dialogue; // Diálogos específicos do NPC
+    public string[] dialogue;
+
+
 }

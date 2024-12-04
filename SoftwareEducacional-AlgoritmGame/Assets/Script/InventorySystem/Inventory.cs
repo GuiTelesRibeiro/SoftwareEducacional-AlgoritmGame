@@ -25,7 +25,11 @@ public class Inventory : MonoBehaviour
 
     private void Awake()
     {
-        Singleton = this;
+
+        if (Singleton == null)
+        {
+            Singleton = this; // Ensure Singleton is properly initialized
+        }
         selectedItemPanel.UpdatePanel(null);
         GetInventoryBanco(1);
         UpdateItensIventory();
@@ -278,5 +282,26 @@ public class Inventory : MonoBehaviour
         bancoDeDados.FecharConexao();
         return isPlayerExist;
     }
+
+    public void DeleteItemById(int itemId)
+    {
+        // Itera pelos slots de inventário para encontrar o item com o ID correspondente
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            // Verifica se o slot contém um item e se o ID do item corresponde ao ID passado
+            if (inventorySlots[i].myItem != null && inventorySlots[i].myItem.myItem.itemID == itemId)
+            {
+                // Remove o item do slot
+                Destroy(inventorySlots[i].myItem.gameObject);
+                inventorySlots[i].myItem = null; // Define o slot como vazio
+                UpdateListInventoryItens(); // Atualiza a lista de itens do inventário
+                return; // Termina a função após deletar o item
+            }
+        }
+
+        // Se o item não for encontrado no inventário, exibe um erro
+        Debug.LogError($"Item com ID {itemId} não encontrado no inventário.");
+    }
+
 
 }
