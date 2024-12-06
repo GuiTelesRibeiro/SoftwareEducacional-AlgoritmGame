@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     private bool isExecutingActions = false;
     private Coroutine currentExecution;
     private bool objectiveReached = false;
+    [SerializeField] PuzzleCanvasController controller;
+
 
     void Start()
     {
@@ -77,13 +79,20 @@ public class PlayerController : MonoBehaviour
         // Se a fila acabar e o objetivo não foi alcançado
         if (!objectiveReached)
         {
-            transform.position = startPosition;
-            movePoint.position = startPosition;
+            ResetPosition();
+            controller.Tentativas += 1;
+            controller.OpenLosePanel();
             Debug.Log("Perdeu");
         }
 
         isExecutingActions = false;
         puzzleController.ToggleButtons(true); // Reativa os botões
+    }
+
+    private void ResetPosition()
+    {
+        transform.position = startPosition;
+        movePoint.position = startPosition;
     }
 
     private void ExecuteAction(string action)
@@ -139,6 +148,18 @@ public class PlayerController : MonoBehaviour
         actionQueue.Clear(); // Limpa a fila de ações
     }
 
+    void SetMove_To_complete()
+    {
+        controller.Move_To_Complete = 0;
+        for (int i= puzzleController.listAction.Length; i>0; i--)
+        {
+            if (puzzleController.listAction[i-1]!= null)
+            {
+                controller.Move_To_Complete += 1;
+            }
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Verifica se o objeto colidido está na camada definida como Objective
@@ -146,7 +167,9 @@ public class PlayerController : MonoBehaviour
         {
             objectiveReached = true;
             StopExecutingActions();
+            SetMove_To_complete();
             Debug.Log("Objetivo alcançado por colisão!");
+            controller.OpenVictoryPanel();
         }
     }
 }

@@ -215,8 +215,8 @@ public class BancoDeDados
     {
         BancoDados = criarEAbrirBancoDeDados();
         IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = @"INSERT INTO Player_Missao (ID_Player, ID_Missao, Time_To_Complete, Number_Attempts, IsMissionComplete)
-                            VALUES (@IDPlayer, @IDMissao, 0, 0, 0);";
+        comando.CommandText = @"INSERT INTO Player_Missao (ID_Player, ID_Missao, Move_To_Complete, Number_Attempts, IsMissionComplete)
+                            VALUES (@IDPlayer, @IDMissao,  null, 0, 0);";
 
         IDbDataParameter paramPlayer = comando.CreateParameter();
         paramPlayer.ParameterName = "@IDPlayer";
@@ -232,11 +232,37 @@ public class BancoDeDados
         BancoDados.Close();
     }
 
-    public int GetTime_To_Complete(int IDPlayer, int IDMissao)
+    public bool VerificarPlayerMissaoExiste(int IDPlayer, int IDMissao)
     {
         BancoDados = criarEAbrirBancoDeDados();
         IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "SELECT Time_To_Complete FROM Player_Missao WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
+        comando.CommandText = "SELECT COUNT(*) FROM Player_Missao WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
+
+        IDbDataParameter paramPlayer = comando.CreateParameter();
+        paramPlayer.ParameterName = "@IDPlayer";
+        paramPlayer.Value = IDPlayer;
+        comando.Parameters.Add(paramPlayer);
+
+        IDbDataParameter paramMissao = comando.CreateParameter();
+        paramMissao.ParameterName = "@IDMissao";
+        paramMissao.Value = IDMissao;
+        comando.Parameters.Add(paramMissao);
+
+        object resultado = comando.ExecuteScalar();
+        BancoDados.Close();
+
+        // Convertendo o resultado para inteiro
+        int count = resultado != null && resultado != DBNull.Value ? Convert.ToInt32(resultado) : 0;
+
+        return count > 0 ? true : false;
+    }
+
+
+    public int GetMove_To_Complete(int IDPlayer, int IDMissao)
+    {
+        BancoDados = criarEAbrirBancoDeDados();
+        IDbCommand comando = BancoDados.CreateCommand();
+        comando.CommandText = "SELECT Move_To_Complete FROM Player_Missao WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
 
         IDbDataParameter paramPlayer = comando.CreateParameter();
         paramPlayer.ParameterName = "@IDPlayer";
@@ -249,23 +275,23 @@ public class BancoDeDados
         comando.Parameters.Add(paramMissao);
 
         IDataReader reader = comando.ExecuteReader();
-        int time = reader.Read() ? reader.GetInt32(0) : -1;
+        int moves = reader.Read() ? reader.GetInt32(0) : -1;
 
         reader.Close();
         BancoDados.Close();
-        return time;
+        return moves;
     }
 
-    public void SetTime_To_Complete(int IDPlayer, int IDMissao, int time)
+    public void SetMove_To_Complete(int IDPlayer, int IDMissao, int moves)
     {
         BancoDados = criarEAbrirBancoDeDados();
         IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "UPDATE Player_Missao SET Time_To_Complete = @time WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
+        comando.CommandText = "UPDATE Player_Missao SET Move_To_Complete = @moves WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
 
-        IDbDataParameter paramTime = comando.CreateParameter();
-        paramTime.ParameterName = "@time";
-        paramTime.Value = time;
-        comando.Parameters.Add(paramTime);
+        IDbDataParameter paramMoves = comando.CreateParameter();
+        paramMoves.ParameterName = "@moves";
+        paramMoves.Value = moves;
+        comando.Parameters.Add(paramMoves);
 
         IDbDataParameter paramPlayer = comando.CreateParameter();
         paramPlayer.ParameterName = "@IDPlayer";
@@ -382,7 +408,9 @@ public class BancoDeDados
     {
         BancoDados = criarEAbrirBancoDeDados();
         IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = $"SELECT MAX(ID_Missao) FROM Player_Missao WHERE ID_Player = {IDPlayer};";
+
+        // Consulta para pegar o maior ID_Missao onde IsMissionComplete == 1
+        comando.CommandText = $"SELECT MAX(ID_Missao) FROM Player_Missao WHERE ID_Player = {IDPlayer} AND IsMissionComplete = 1;";
 
         object resultado = comando.ExecuteScalar();
         BancoDados.Close();
@@ -392,11 +420,6 @@ public class BancoDeDados
             return Convert.ToInt32(resultado);
         }
 
-        return -1; // Retorna -1 caso não haja missões relacionadas ao jogador
+        return -1; // Retorna -1 caso não haja missões completas relacionadas ao jogador
     }
-
-
-
-
-
 }

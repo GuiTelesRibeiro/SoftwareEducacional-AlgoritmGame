@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 48d111788edeff544b15b5b74a0bd1d9
+guid: 65065e317981eff4b8319c0470f01e51
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -123,169 +123,148 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: NavePlayer.idle_0
+      name: SetaSplitSheet_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
         height: 32
-      alignment: 9
-      pivot: {x: 0.5, y: 0.075}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c960d32b77a809b4d9d9be84e209ad38
-      internalID: -1524127500
+      spriteID: 92043e855874a8e47bc0420e539b9db1
+      internalID: -1289170290
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NavePlayer.idle_1
+      name: SetaSplitSheet_1
       rect:
         serializedVersion: 2
         x: 32
         y: 0
         width: 32
         height: 32
-      alignment: 9
-      pivot: {x: 0.5, y: 0.075}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1953709d4e1d81843a1d16379544a74f
-      internalID: 2094509143
+      spriteID: a7db444c8bef61d43960b7d86436cc6e
+      internalID: 1347271579
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NavePlayer.idle_2
+      name: SetaSplitSheet_2
       rect:
         serializedVersion: 2
         x: 64
         y: 0
         width: 32
         height: 32
-      alignment: 9
-      pivot: {x: 0.5, y: 0.075}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4283353983d056548883ae0c75eb18c6
-      internalID: 1634490547
+      spriteID: bcad5619713959e4b9bbabeddedaabc6
+      internalID: -1107048854
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NavePlayer.idle_3
+      name: SetaSplitSheet_3
       rect:
         serializedVersion: 2
         x: 96
         y: 0
         width: 32
         height: 32
-      alignment: 9
-      pivot: {x: 0.5, y: 0.075}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 56710734a9ea87e4cab39fe5b9c91e24
-      internalID: -723170644
+      spriteID: f3bb9da771942e64982f1cc9bb3f64a6
+      internalID: 491859970
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NavePlayer.idle_4
+      name: SetaSplitSheet_4
       rect:
         serializedVersion: 2
         x: 128
         y: 0
         width: 32
         height: 32
-      alignment: 9
-      pivot: {x: 0.5, y: 0.075}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d32c44a027ad928478086aa7d72d1694
-      internalID: -823310411
+      spriteID: c9a8ec045b0f54148a90095b3fd5b768
+      internalID: -1044203078
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NavePlayer.idle_5
+      name: SetaSplitSheet_5
       rect:
         serializedVersion: 2
         x: 160
         y: 0
         width: 32
         height: 32
-      alignment: 9
-      pivot: {x: 0.5, y: 0.075}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e8e0797705478344e881eae8440a0d0b
-      internalID: 302488676
+      spriteID: adf3ba016a0e32f48891e1b69fffe8b1
+      internalID: -2044082107
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NavePlayer.idle_6
+      name: SetaSplitSheet_6
       rect:
         serializedVersion: 2
         x: 192
         y: 0
         width: 32
         height: 32
-      alignment: 9
-      pivot: {x: 0.5, y: 0.075}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 266b67efcb113f143a4e30be0d69fe08
-      internalID: -1588105447
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: NavePlayer.idle_7
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 0
-        width: 32
-        height: 32
-      alignment: 9
-      pivot: {x: 0.5, y: 0.075}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3aecf0bda8f2de24191d83d04294e6c7
-      internalID: 1886627004
+      spriteID: e63162d942e53554bb3e2c61e8e387f9
+      internalID: -277243661
       vertices: []
       indices: 
       edges: []
@@ -301,14 +280,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      NavePlayer.idle_0: -1524127500
-      NavePlayer.idle_1: 2094509143
-      NavePlayer.idle_2: 1634490547
-      NavePlayer.idle_3: -723170644
-      NavePlayer.idle_4: -823310411
-      NavePlayer.idle_5: 302488676
-      NavePlayer.idle_6: -1588105447
-      NavePlayer.idle_7: 1886627004
+      SetaSplitSheet_0: -1289170290
+      SetaSplitSheet_1: 1347271579
+      SetaSplitSheet_2: -1107048854
+      SetaSplitSheet_3: 491859970
+      SetaSplitSheet_4: -1044203078
+      SetaSplitSheet_5: -2044082107
+      SetaSplitSheet_6: -277243661
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
