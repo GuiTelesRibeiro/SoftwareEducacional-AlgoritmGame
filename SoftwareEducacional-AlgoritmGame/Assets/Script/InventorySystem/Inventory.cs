@@ -16,7 +16,7 @@ public class Inventory : MonoBehaviour
     private InventoryItem selectedItem;
 
     // Lista de itens disponíveis para spawn
-    [SerializeField] private Item[] allItemsList;
+    [SerializeField] public Item[] allItemsList;
 
     public InventoryItem SelectedItem => selectedItem;
     public int[] getItemIds;// Lista sempre atualizada com os itens que tem no inventario jogador 

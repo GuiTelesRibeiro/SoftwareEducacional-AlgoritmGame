@@ -10,26 +10,18 @@ public class CanvasController : MonoBehaviour
     [SerializeField] GameObject InventoryPanel;
     [SerializeField] GameObject UiPanel;
     [SerializeField] GameObject MenuPanel;
+    [SerializeField] GameObject MisisonPanel;
     
     void Awake()
     {
         Singleton = this;
         TouchControllPanel.SetActive(Application.isMobilePlatform);
+        InventoryPanel.SetActive(true);
+
     }
     private void Start()
     {
         DefaultPainels();
-    }
-
-    public void ResetPanel()
-    {
-        if(Application.isMobilePlatform)
-            TouchControllPanel.SetActive(false);
-        DialoguePanel.SetActive(false);
-        InventoryPanel.SetActive(false);
-        UiPanel.SetActive(false);
-        MenuPanel.SetActive(false);
-
     }
     void Update()
     {
@@ -40,6 +32,24 @@ public class CanvasController : MonoBehaviour
         }
     }
 
+    public void ResetPanel()
+    {
+        if(Application.isMobilePlatform)
+            TouchControllPanel.SetActive(false);
+        DialoguePanel.SetActive(false);
+        InventoryPanel.SetActive(false);
+        UiPanel.SetActive(false);
+        MenuPanel.SetActive(false);
+        MisisonPanel.SetActive(false);
+
+    }
+
+    public void OpenMissionPanel()
+    {
+        ResetPanel();
+        MisisonPanel.SetActive(true);
+
+    }
     public void OpenInventoryPainel()
     {
         ResetPanel();
