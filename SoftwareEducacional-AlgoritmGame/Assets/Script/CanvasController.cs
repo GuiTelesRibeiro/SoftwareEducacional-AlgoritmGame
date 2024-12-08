@@ -16,7 +16,6 @@ public class CanvasController : MonoBehaviour
     {
         Singleton = this;
         TouchControllPanel.SetActive(Application.isMobilePlatform);
-        InventoryPanel.SetActive(true);
 
     }
     private void Start()

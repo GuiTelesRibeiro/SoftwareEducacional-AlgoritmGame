@@ -41,7 +41,7 @@ public class BancoDeDados
             }
         }
 
-        Debug.Log($"{destino}");
+        //Debug.Log($"{destino}");
         return destino;
     }
     private IDbConnection criarEAbrirBancoDeDados()
@@ -420,6 +420,6 @@ public class BancoDeDados
             return Convert.ToInt32(resultado);
         }
 
-        return -1; // Retorna -1 caso não haja missões completas relacionadas ao jogador
+        return 0;
     }
 }

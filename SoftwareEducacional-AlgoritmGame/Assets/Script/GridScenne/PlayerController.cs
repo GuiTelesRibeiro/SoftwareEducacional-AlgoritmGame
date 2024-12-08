@@ -170,6 +170,7 @@ public class PlayerController : MonoBehaviour
             SetMove_To_complete();
             Debug.Log("Objetivo alcançado por colisão!");
             controller.OpenVictoryPanel();
+            ResetPosition();
         }
     }
 }

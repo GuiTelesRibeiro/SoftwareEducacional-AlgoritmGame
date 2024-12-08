@@ -21,6 +21,7 @@ public class Inventory : MonoBehaviour
     public InventoryItem SelectedItem => selectedItem;
     public int[] getItemIds;// Lista sempre atualizada com os itens que tem no inventario jogador 
     public int[] setItemIds;
+    private int itemAReceber;
 
 
     private void Awake()

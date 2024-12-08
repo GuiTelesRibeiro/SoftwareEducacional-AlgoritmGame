@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class PuzzleCanvasController : MonoBehaviour
@@ -17,6 +18,9 @@ public class PuzzleCanvasController : MonoBehaviour
     [SerializeField] int IdMissao;
     [SerializeField] bool playTutorial;
     public int Move_To_Complete;
+    [SerializeField] Image imageItem;
+    [SerializeField] Item[] allListItem;
+    [SerializeField] ItemSpawnCache itemSpawnCache;
 
     // Start is called before the first frame update
     private void Awake()
@@ -28,6 +32,7 @@ public class PuzzleCanvasController : MonoBehaviour
             Debug.Log("PlayerMissao Nao existe ainda");
             bancoDeDados.CriarPlayerMissao(IdPlayer, IdMissao);
         }
+        imageItem.sprite = allListItem[bancoDeDados.GetMissaoIdItem(IdMissao)-1].sprite;
     }
     void Start()
     {
@@ -88,9 +93,10 @@ public class PuzzleCanvasController : MonoBehaviour
             }
                 return;
         }
-            Debug.Log($"{Move_To_Complete}");
-            bancoDeDados.SetIsMissionComplete(IdPlayer, IdMissao, 1);
-            bancoDeDados.SetMove_To_Complete(IdPlayer,IdMissao, Move_To_Complete);
+        itemSpawnCache.itemSpawnId = bancoDeDados.GetMissaoIdItem(IdMissao);
+        Debug.Log($"{Move_To_Complete}");
+        bancoDeDados.SetIsMissionComplete(IdPlayer, IdMissao, 1);
+        bancoDeDados.SetMove_To_Complete(IdPlayer,IdMissao, Move_To_Complete);
 
     }
     public void OpenLosePanel()
