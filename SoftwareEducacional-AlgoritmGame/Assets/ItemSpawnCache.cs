@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class ItemSpawnCache : MonoBehaviour
 {
     public int itemSpawnId;
+    public int playerId = 1;
 
     void Awake()
     {
@@ -25,11 +26,7 @@ public class ItemSpawnCache : MonoBehaviour
         if (scene.name == "Main")
         {
             Debug.Log("Cena 'main' carregada. Executando código.");
-            if (Inventory.Singleton != null)
-            {
-                Debug.Log("Inventory.Singleton != null");
-                SpawnItem(itemSpawnId);
-            }
+            SpawnItem();
         }
         else
         {
@@ -37,14 +34,48 @@ public class ItemSpawnCache : MonoBehaviour
         }
     }
 
-    void SpawnItem(int itemSpawnId)
+    void SpawnItem()
     {
-        Debug.Log("Teste");
-        if (itemSpawnId != 0)
+        if (itemSpawnId == 0)
         {
-            Inventory.Singleton.SpawnInventoryItemById(itemSpawnId);
-            this.itemSpawnId = 0;
+            Debug.LogWarning("Nenhum item para spawnar (itemSpawnId é 0).");
+            return;
         }
-        Destroy(gameObject); // Destrói o objeto após spawnar o item
+
+        Debug.Log($"Iniciando o spawn do item com ID {itemSpawnId}.");
+
+        // Supondo que BancoDeDados tenha uma instância ou método estático para acesso
+        BancoDeDados bancoDeDados = new BancoDeDados();
+        int[] InventarioPlayer = bancoDeDados.LerInventario(playerId);
+
+        bool itemAdicionado = false;
+
+        for (int i = 0; i < InventarioPlayer.Length; i++)
+        {
+            if (InventarioPlayer[i] == 0) // Verifica o primeiro espaço vazio
+            {
+                InventarioPlayer[i] = itemSpawnId;
+                itemAdicionado = true;
+                bancoDeDados.SalvarInventario(playerId, InventarioPlayer);
+                PanelItemRecebido();
+                Debug.Log($"Item com ID {itemSpawnId} adicionado ao slot {i}.");
+                break; // Sai do loop após adicionar o item
+            }
+        }
+
+        if (itemAdicionado)
+        {
+            itemSpawnId = 0; // Reseta o ID do item após adicioná-lo
+            Destroy(gameObject); // Destrói o objeto após adicionar o item
+        }
+        else
+        {
+            Debug.LogWarning("Inventário cheio! Não foi possível adicionar o item.");
+        }
     }
+    public void PanelItemRecebido()
+    {
+        Debug.Log("PanelItemRecebido");
+    }
+
 }

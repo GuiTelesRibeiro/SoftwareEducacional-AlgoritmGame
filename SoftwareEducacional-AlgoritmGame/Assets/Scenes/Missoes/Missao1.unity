@@ -23044,6 +23044,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemSpawnId: 0
+  playerId: 1
 --- !u!4 &1093976400
 Transform:
   m_ObjectHideFlags: 0
@@ -51382,6 +51383,6 @@ SceneRoots:
   - {fileID: 385618299}
   - {fileID: 2011470831}
   - {fileID: 1539206671}
-  - {fileID: 1093976400}
   - {fileID: 1070274150}
   - {fileID: 1596377183}
+  - {fileID: 1093976400}

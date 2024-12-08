@@ -32,10 +32,14 @@ public class Inventory : MonoBehaviour
             Singleton = this; // Ensure Singleton is properly initialized
         }
         selectedItemPanel.UpdatePanel(null);
+        
+    }
+
+    private void Start()
+    {
         GetInventoryBanco(1);
         UpdateItensIventory();
     }
-
     private void Update()
     {
         InventoryDataUpdate(1);
@@ -307,7 +311,7 @@ public class Inventory : MonoBehaviour
     public void ResetMissaoPlayer()
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
-    
+        bancoDeDados.SetIsMissionComplete(1, 1, 0);
 
 
     }
