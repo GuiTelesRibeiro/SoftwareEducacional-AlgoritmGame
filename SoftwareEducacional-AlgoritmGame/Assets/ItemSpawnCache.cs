@@ -9,6 +9,7 @@ public class ItemSpawnCache : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("Awake");
         DontDestroyOnLoad(gameObject); // Marca o objeto para persistir entre cenas
         SceneManager.sceneLoaded += OnSceneLoaded; // Adiciona o evento de carregamento de cena
     }
@@ -23,10 +24,11 @@ public class ItemSpawnCache : MonoBehaviour
         // Verifica se a cena carregada é "main"
         if (scene.name == "Main")
         {
-            Debug.Log("Cena 'Main' carregada. Executando código com atraso.");
+            Debug.Log("Cena 'main' carregada. Executando código.");
             if (Inventory.Singleton != null)
             {
-                StartCoroutine(SpawnItemWithDelay(itemSpawnId, 1.0f)); // Chama com 1 segundo de atraso
+                Debug.Log("Inventory.Singleton != null");
+                SpawnItem(itemSpawnId);
             }
         }
         else
@@ -35,14 +37,9 @@ public class ItemSpawnCache : MonoBehaviour
         }
     }
 
-    IEnumerator SpawnItemWithDelay(int itemSpawnId, float delay)
-    {
-        yield return new WaitForSeconds(delay); // Espera pelo tempo definido
-        SpawnItem(itemSpawnId);
-    }
-
     void SpawnItem(int itemSpawnId)
     {
+        Debug.Log("Teste");
         if (itemSpawnId != 0)
         {
             Inventory.Singleton.SpawnInventoryItemById(itemSpawnId);
