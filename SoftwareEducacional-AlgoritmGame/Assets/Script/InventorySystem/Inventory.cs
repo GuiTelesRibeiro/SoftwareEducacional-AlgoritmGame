@@ -304,5 +304,11 @@ public class Inventory : MonoBehaviour
         Debug.LogError($"Item com ID {itemId} não encontrado no inventário.");
     }
 
+    public void ResetMissaoPlayer()
+    {
+        BancoDeDados bancoDeDados = new BancoDeDados();
+    
 
+
+    }
 }

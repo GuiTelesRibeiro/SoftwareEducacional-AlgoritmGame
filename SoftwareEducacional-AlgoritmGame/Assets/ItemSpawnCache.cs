@@ -23,16 +23,22 @@ public class ItemSpawnCache : MonoBehaviour
         // Verifica se a cena carregada é "main"
         if (scene.name == "Main")
         {
-            Debug.Log("Cena 'main' carregada. Executando código.");
+            Debug.Log("Cena 'Main' carregada. Executando código com atraso.");
             if (Inventory.Singleton != null)
             {
-                SpawnItem(itemSpawnId);
+                StartCoroutine(SpawnItemWithDelay(itemSpawnId, 1.0f)); // Chama com 1 segundo de atraso
             }
         }
         else
         {
             Debug.Log($"Cena carregada: {scene.name}. Nenhuma ação realizada.");
         }
+    }
+
+    IEnumerator SpawnItemWithDelay(int itemSpawnId, float delay)
+    {
+        yield return new WaitForSeconds(delay); // Espera pelo tempo definido
+        SpawnItem(itemSpawnId);
     }
 
     void SpawnItem(int itemSpawnId)
