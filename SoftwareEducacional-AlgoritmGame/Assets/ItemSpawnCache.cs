@@ -7,6 +7,7 @@ public class ItemSpawnCache : MonoBehaviour
 {
     public int itemSpawnId;
     public int playerId = 1;
+    [SerializeField] GameObject CanvasItemRecebido;
 
     void Awake()
     {
@@ -22,10 +23,15 @@ public class ItemSpawnCache : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Verifica se a cena carregada é "main"
+        // Verifica se a cena carregada é "Main"
         if (scene.name == "Main")
         {
-            Debug.Log("Cena 'main' carregada. Executando código.");
+            Debug.Log("Cena 'Main' carregada. Executando código.");
+
+            // Configura a câmera do Canvas
+            SetupCanvasCamera();
+
+            // Realiza o spawn do item
             SpawnItem();
         }
         else
@@ -34,11 +40,38 @@ public class ItemSpawnCache : MonoBehaviour
         }
     }
 
+    void SetupCanvasCamera()
+    {
+        Debug.Log("Configurando câmera do Canvas...");
+        if (CanvasItemRecebido != null)
+        {
+            Canvas canvas = CanvasItemRecebido.GetComponent<Canvas>();
+            if (canvas != null && canvas.renderMode == RenderMode.ScreenSpaceCamera)
+            {
+                Camera mainCamera = Camera.main; // Obtém a câmera principal da cena
+                if (mainCamera != null)
+                {
+                    canvas.worldCamera = mainCamera; // Atribui a câmera ao Canvas
+                    Debug.Log("Câmera atribuída ao Canvas com sucesso.");
+                }
+                else
+                {
+                    Debug.LogWarning("Nenhuma câmera principal encontrada na cena!");
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("CanvasItemRecebido não está configurado.");
+        }
+    }
+
     void SpawnItem()
     {
         if (itemSpawnId == 0)
         {
             Debug.LogWarning("Nenhum item para spawnar (itemSpawnId é 0).");
+            Destroy(gameObject);
             return;
         }
 
@@ -66,16 +99,29 @@ public class ItemSpawnCache : MonoBehaviour
         if (itemAdicionado)
         {
             itemSpawnId = 0; // Reseta o ID do item após adicioná-lo
-            Destroy(gameObject); // Destrói o objeto após adicionar o item
+            
         }
         else
         {
             Debug.LogWarning("Inventário cheio! Não foi possível adicionar o item.");
+            Destroy(gameObject); // Destrói o objeto após adicionar o item
         }
     }
+
     public void PanelItemRecebido()
     {
-        Debug.Log("PanelItemRecebido");
+        Debug.Log("Exibindo painel de item recebido...");
+
+        // Ativa o Canvas e exibe por 5 segundos
+        CanvasItemRecebido.SetActive(true);
+        StartCoroutine(DisablePanelAfterDelay(2)); // Aguarda 5 segundos para desativar
     }
 
+    IEnumerator DisablePanelAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(gameObject); // Destrói o objeto após adicionar o item
+        CanvasItemRecebido.SetActive(false); // Desativa o Canvas
+        Debug.Log("Painel de item recebido ocultado.");
+    }
 }

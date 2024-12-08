@@ -13,6 +13,7 @@ public class MissaoController : MonoBehaviour
     [SerializeField] TMP_Text nomeMissao;
     [SerializeField] TMP_Text descricaoMissao;
     [SerializeField] int PlayerID;
+    [SerializeField] int ultimaMissaoAberta;
     public int MaiorPlayerMissionCompleta;
     // Start is called before the first frame update
     void Start()
@@ -32,6 +33,8 @@ public class MissaoController : MonoBehaviour
 
     public void ObrirMissaoPanel(int missionID)
     {
+        ultimaMissaoAberta = missionID;
+
         InfoMissionUpdate(missionID);
         missaoPanel.SetActive(true);
         missoesPanel.SetActive(false);
@@ -53,8 +56,9 @@ public class MissaoController : MonoBehaviour
         descricaoMissao.text =bancoDeDados.GetMissaoDescricao(missionID);
 
     }
-    public void IrParaMissao(int missionID)
+    public void IrParaMissao()
     {
+        int missionID = ultimaMissaoAberta;
         // Construa o nome da cena baseado no ID da missão
         string nomeCena = "Missao" + missionID;
 

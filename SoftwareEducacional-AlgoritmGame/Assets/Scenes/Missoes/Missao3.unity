@@ -2914,7 +2914,7 @@ MonoBehaviour:
   UiPanel: {fileID: 800441204}
   Tentativas: 0
   IdPlayer: 1
-  IdMissao: 1
+  IdMissao: 3
   playTutorial: 0
   Move_To_Complete: 0
   imageItem: {fileID: 80562399}
@@ -23110,7 +23110,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 8
-  m_Sprite: {fileID: -33024896, guid: 6502f47fea845684a8d967783e8afde5, type: 3}
+  m_Sprite: {fileID: -87380216, guid: 6502f47fea845684a8d967783e8afde5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
