@@ -39,9 +39,7 @@ public class Inventory : MonoBehaviour
     {
         selectedItemPanel.UpdatePanel(null);
         ItensListBanco = GetInventoryBanco(IdPlayer);
-        Debug.Log("AA");
-        UpdateInterface(ItensListBanco);
-        Debug.Log("BB");
+        UpdateInterface(ItensListBanco);;
     }
 
     private bool AreArraysEqual(int[] array1, int[] array2)
@@ -284,7 +282,7 @@ public class Inventory : MonoBehaviour
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
         bancoDeDados.SetIsMissionComplete(1, 1, 0);
-
+        bancoDeDados.SetIsItemDelivered(1, 1, 0);
 
     }
 }

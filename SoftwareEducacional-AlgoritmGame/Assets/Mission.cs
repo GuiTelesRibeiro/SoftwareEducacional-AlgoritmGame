@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class Mission : MonoBehaviour
 {
@@ -13,7 +11,7 @@ public class Mission : MonoBehaviour
     [SerializeField] GameObject pendentePanel;
     [SerializeField] Image itemImage;
     [SerializeField] TMP_Text missionNameTMP;
-    [SerializeField] int idPlayer;
+    [SerializeField] int idPlayer = 1;
     [SerializeField] int idMission;
     public bool isMissionCompleted;
     [SerializeField]  MissoesController missoesController;
@@ -31,6 +29,8 @@ public class Mission : MonoBehaviour
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
         int[] itensDoInventario = bancoDeDados.LerInventario(idPlayer);
+        
+
         if (itensDoInventario == null)
         {
             Debug.LogError("Itens do Inventário is null!");
@@ -62,6 +62,8 @@ public class Mission : MonoBehaviour
             {
                 itensDoInventario[i] = 0;
                 BancoDeDados bancoDeDados = new BancoDeDados();
+                Debug.Log($" interaction2 : {itensDoInventario[0]},{itensDoInventario[1]},{itensDoInventario[2]},{itensDoInventario[3]},{itensDoInventario[4]},{itensDoInventario[5]},{itensDoInventario[6]},{itensDoInventario[7]},{itensDoInventario[8]}");
+
                 bancoDeDados.SalvarInventario(idPlayer ,itensDoInventario);
                 bancoDeDados.SetIsItemDelivered(idPlayer, idMission, 1);
                 missoesController.FimDeJogo();

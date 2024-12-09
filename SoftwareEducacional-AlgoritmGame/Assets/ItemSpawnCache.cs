@@ -103,6 +103,7 @@ public class ItemSpawnCache : MonoBehaviour
         }
         else
         {
+            
             Debug.LogWarning("Inventário cheio! Não foi possível adicionar o item.");
             Destroy(gameObject); // Destrói o objeto após adicionar o item
         }

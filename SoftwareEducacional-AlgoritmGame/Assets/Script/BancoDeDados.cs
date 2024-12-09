@@ -84,6 +84,8 @@ public class BancoDeDados
         }
 
         InserOuAtualizaDados.ExecuteNonQuery();
+        int[] InventarioVazio = new int[] { 0, 0, 0, 0, 0, 0, 0, 0,0 };
+        SalvarInventario(1, InventarioVazio);
         BancoDados.Close();
     }
     public IDataReader LerPlayer(int id)

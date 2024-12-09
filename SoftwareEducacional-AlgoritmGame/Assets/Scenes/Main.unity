@@ -3251,8 +3251,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 998935030}
         m_TargetAssemblyTypeName: Inventory, Assembly-CSharp
-        m_MethodName: ResetMissaoPlayer
-        m_Mode: 1
+        m_MethodName: SetInventoryBanco
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -8731,7 +8731,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 47.1
+  m_fontSize: 47.05
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -59825,7 +59825,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 47.1
+  m_fontSize: 47.05
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
