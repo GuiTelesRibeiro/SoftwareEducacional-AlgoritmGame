@@ -22,7 +22,7 @@ public class Inventory : MonoBehaviour
     public int[] TempItensList;// Lista sempre atualizada com os itens que tem no inventario jogador 
     public int[] ItensListBanco;
     private int itemAReceber;
-    private int IdPlayer;
+    private int IdPlayer = 1;
 
 
     private void Awake()
@@ -32,10 +32,16 @@ public class Inventory : MonoBehaviour
         {
             Singleton = this; // Ensure Singleton is properly initialized
         }
+        
+
+    }
+    private void Start()
+    {
         selectedItemPanel.UpdatePanel(null);
         ItensListBanco = GetInventoryBanco(IdPlayer);
+        Debug.Log("AA");
         UpdateInterface(ItensListBanco);
-        
+        Debug.Log("BB");
     }
 
     private bool AreArraysEqual(int[] array1, int[] array2)
@@ -160,7 +166,7 @@ public class Inventory : MonoBehaviour
         return null;
     }
 
-    private void UpdateListInventoryItens()
+    public void UpdateListInventoryItens()
     {
         // Inicializa o vetor com o tamanho do número de slots de inventário
         TempItensList = new int[inventorySlots.Length];
@@ -180,8 +186,9 @@ public class Inventory : MonoBehaviour
                 TempItensList[i] = 0;
             }
         }
-        BancoDeDados bancoDeDados = new BancoDeDados();
-        bancoDeDados.SalvarInventario(IdPlayer, TempItensList);
+        Debug.Log($"{TempItensList[0]},{TempItensList[1]},{TempItensList[2]},{TempItensList[3]},{TempItensList[4]},{TempItensList[5]},{TempItensList[6]},{TempItensList[7]},{TempItensList[8]}");
+        SetInventoryBanco(IdPlayer, TempItensList);
+        UpdateInterface(TempItensList);
     }
 
 
@@ -189,7 +196,7 @@ public class Inventory : MonoBehaviour
     {
 
         ID = 1;// por enquanto tem apenas um player
-        ItensListBanco = TempItensList;
+        //ItensListBanco = TempItensList;
         if (!PlayerExist(ID))
         {
             return;

@@ -75,5 +75,7 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
         // Ajusta a posição do item para ser filho deste slot
         myItem.transform.SetParent(transform, false); // Define o slot como pai
         myItem.transform.localPosition = Vector3.zero; // Centraliza o item no slot
+
+        Inventory.Singleton.UpdateListInventoryItens();
     }
 }
