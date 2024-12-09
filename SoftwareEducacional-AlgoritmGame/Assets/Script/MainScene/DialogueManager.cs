@@ -85,12 +85,12 @@ public class DialogueManager : MonoBehaviour
     {
         if (collision.CompareTag("NPC"))
         {
-            Debug.Log("NPC");
+            //Debug.Log("NPC");
             currentNPC = collision.GetComponent<NPC>();
         }
         if (collision.CompareTag("Mission"))
         {
-            Debug.Log("Mission");
+            //Debug.Log("Mission");
             currentMission = collision.GetComponent<Mission>();
         }
     }
@@ -99,13 +99,13 @@ public class DialogueManager : MonoBehaviour
     {
         if (collision.CompareTag("NPC"))
         {
-            Debug.Log("NPC");
+            //Debug.Log("NPC");
             currentNPC = null;
             ZeroText();
         }
         if (collision.CompareTag("Mission"))
         {
-            Debug.Log("Mission");
+            //Debug.Log("Mission");
             currentMission =null;
         }
     }

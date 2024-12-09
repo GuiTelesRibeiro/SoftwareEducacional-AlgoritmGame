@@ -83,7 +83,7 @@ public class PuzzleCanvasController : MonoBehaviour
         BancoDeDados bancoDeDados = new BancoDeDados();
         Tentativas += 1;
         SaveTentativas();
-        Debug.Log("SveMission");
+        //Debug.Log("SveMission");
         if (bancoDeDados.GetIsMissionComplete(IdPlayer,IdMissao)==1)
         {
             if (Move_To_Complete < bancoDeDados.GetMove_To_Complete(IdPlayer,IdMissao))
@@ -94,7 +94,7 @@ public class PuzzleCanvasController : MonoBehaviour
                 return;
         }
         itemSpawnCache.itemSpawnId = bancoDeDados.GetMissaoIdItem(IdMissao);
-        Debug.Log($"{Move_To_Complete}");
+        //Debug.Log($"{Move_To_Complete}");
         bancoDeDados.SetIsMissionComplete(IdPlayer, IdMissao, 1);
         bancoDeDados.SetMove_To_Complete(IdPlayer,IdMissao, Move_To_Complete);
 

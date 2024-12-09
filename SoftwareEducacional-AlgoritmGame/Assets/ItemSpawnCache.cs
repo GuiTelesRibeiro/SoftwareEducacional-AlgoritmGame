@@ -11,7 +11,7 @@ public class ItemSpawnCache : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log("Awake");
+        //Debug.Log("Awake");
         DontDestroyOnLoad(gameObject); // Marca o objeto para persistir entre cenas
         SceneManager.sceneLoaded += OnSceneLoaded; // Adiciona o evento de carregamento de cena
     }
@@ -26,7 +26,7 @@ public class ItemSpawnCache : MonoBehaviour
         // Verifica se a cena carregada é "Main"
         if (scene.name == "Main")
         {
-            Debug.Log("Cena 'Main' carregada. Executando código.");
+            //Debug.Log("Cena 'Main' carregada. Executando código.");
 
             // Configura a câmera do Canvas
             SetupCanvasCamera();
@@ -36,13 +36,13 @@ public class ItemSpawnCache : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Cena carregada: {scene.name}. Nenhuma ação realizada.");
+            //Debug.Log($"Cena carregada: {scene.name}. Nenhuma ação realizada.");
         }
     }
 
     void SetupCanvasCamera()
     {
-        Debug.Log("Configurando câmera do Canvas...");
+        //Debug.Log("Configurando câmera do Canvas...");
         if (CanvasItemRecebido != null)
         {
             Canvas canvas = CanvasItemRecebido.GetComponent<Canvas>();
@@ -75,7 +75,7 @@ public class ItemSpawnCache : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Iniciando o spawn do item com ID {itemSpawnId}.");
+        //Debug.Log($"Iniciando o spawn do item com ID {itemSpawnId}.");
 
         // Supondo que BancoDeDados tenha uma instância ou método estático para acesso
         BancoDeDados bancoDeDados = new BancoDeDados();
@@ -91,7 +91,7 @@ public class ItemSpawnCache : MonoBehaviour
                 itemAdicionado = true;
                 bancoDeDados.SalvarInventario(playerId, InventarioPlayer);
                 PanelItemRecebido();
-                Debug.Log($"Item com ID {itemSpawnId} adicionado ao slot {i}.");
+                //Debug.Log($"Item com ID {itemSpawnId} adicionado ao slot {i}.");
                 break; // Sai do loop após adicionar o item
             }
         }
@@ -110,7 +110,7 @@ public class ItemSpawnCache : MonoBehaviour
 
     public void PanelItemRecebido()
     {
-        Debug.Log("Exibindo painel de item recebido...");
+        //Debug.Log("Exibindo painel de item recebido...");
 
         // Ativa o Canvas e exibe por 5 segundos
         CanvasItemRecebido.SetActive(true);
@@ -122,6 +122,6 @@ public class ItemSpawnCache : MonoBehaviour
         yield return new WaitForSeconds(delay);
         Destroy(gameObject); // Destrói o objeto após adicionar o item
         CanvasItemRecebido.SetActive(false); // Desativa o Canvas
-        Debug.Log("Painel de item recebido ocultado.");
+        //Debug.Log("Painel de item recebido ocultado.");
     }
 }

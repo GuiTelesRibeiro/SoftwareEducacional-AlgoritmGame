@@ -19,9 +19,10 @@ public class Inventory : MonoBehaviour
     [SerializeField] public Item[] allItemsList;
 
     public InventoryItem SelectedItem => selectedItem;
-    public int[] getItemIds;// Lista sempre atualizada com os itens que tem no inventario jogador 
-    public int[] setItemIds;
+    public int[] TempItensList;// Lista sempre atualizada com os itens que tem no inventario jogador 
+    public int[] ItensListBanco;
     private int itemAReceber;
+    private int IdPlayer;
 
 
     private void Awake()
@@ -32,29 +33,11 @@ public class Inventory : MonoBehaviour
             Singleton = this; // Ensure Singleton is properly initialized
         }
         selectedItemPanel.UpdatePanel(null);
+        ItensListBanco = GetInventoryBanco(IdPlayer);
+        UpdateInterface(ItensListBanco);
         
     }
 
-    private void Start()
-    {
-        GetInventoryBanco(1);
-        UpdateItensIventory();
-    }
-    private void Update()
-    {
-        InventoryDataUpdate(1);
-        
-    }
-    public void InventoryDataUpdate(int ID)
-    {
-        UpdateListInventoryItens();// mantem uma lista atualizada dos itens do inventario
-        if (AreArraysEqual(getItemIds, setItemIds))
-        {
-            return;
-        }
-
-        SetInventoryBanco(1);
-    }
     private bool AreArraysEqual(int[] array1, int[] array2)
     {
         if (array1 == null || array2 == null)
@@ -177,10 +160,10 @@ public class Inventory : MonoBehaviour
         return null;
     }
 
-    private int[] UpdateListInventoryItens()
+    private void UpdateListInventoryItens()
     {
         // Inicializa o vetor com o tamanho do número de slots de inventário
-        getItemIds = new int[inventorySlots.Length];
+        TempItensList = new int[inventorySlots.Length];
 
         // Itera sobre cada slot do inventário
         for (int i = 0; i < inventorySlots.Length; i++)
@@ -189,44 +172,47 @@ public class Inventory : MonoBehaviour
             if (inventorySlots[i].myItem != null)
             {
                 // Armazena o ID do item no vetor
-                getItemIds[i] = inventorySlots[i].myItem.myItem.itemID; 
+                TempItensList[i] = inventorySlots[i].myItem.myItem.itemID; 
             }
             else
             {
                 // Se não houver item, coloca 0
-                getItemIds[i] = 0;
+                TempItensList[i] = 0;
             }
         }
-            return getItemIds;
+        BancoDeDados bancoDeDados = new BancoDeDados();
+        bancoDeDados.SalvarInventario(IdPlayer, TempItensList);
     }
 
 
-    public void SetInventoryBanco(int ID)
+    public void SetInventoryBanco(int ID , int[] ItensList)
     {
 
         ID = 1;// por enquanto tem apenas um player
-        setItemIds = getItemIds;
+        ItensListBanco = TempItensList;
         if (!PlayerExist(ID))
         {
             return;
         }
         BancoDeDados bancoDeDados = new BancoDeDados();
-        bancoDeDados.SalvarInventario(ID, setItemIds);
-        UpdateItensIventory();
+        bancoDeDados.SalvarInventario(ID, ItensList);
+        //UpdateInterface();
     }
-    public void GetInventoryBanco(int ID)
+    public int[] GetInventoryBanco(int ID)
     {
+        int[] itensList;
         ID = 1;// por enquanto tem apenas um player
         if (!PlayerExist(ID))
         {
-            return;
+            return null;
         }
         BancoDeDados bancoDeDados = new BancoDeDados();
-        setItemIds = bancoDeDados.LerInventario(ID);
+        itensList = bancoDeDados.LerInventario(ID);
+        return itensList;
     }
 
 
-    public void UpdateItensIventory()
+    public void UpdateInterface(int[] ItensListBanco)
     {
         // Itera pelos slots do inventário para limpar itens antigos
         foreach (var slot in inventorySlots)
@@ -239,11 +225,11 @@ public class Inventory : MonoBehaviour
         }
 
         // Itera sobre os IDs salvos e os atribui ao respectivo slot
-        for (int i = 0; i < setItemIds.Length; i++)
+        for (int i = 0; i < ItensListBanco.Length; i++)
         {
-            if (setItemIds[i] > 0 && i < inventorySlots.Length) // Verifica se o ID do item e o índice do slot são válidos
+            if (ItensListBanco[i] > 0 && i < inventorySlots.Length) // Verifica se o ID do item e o índice do slot são válidos
             {
-                SpawnItemDirectlyToSlot(setItemIds[i], inventorySlots[i]);
+                SpawnItemDirectlyToSlot(ItensListBanco[i], inventorySlots[i]);
             }
         }
     }
@@ -274,7 +260,7 @@ public class Inventory : MonoBehaviour
 
         if (dados.Read())
         {
-            Debug.Log("PlayerExiste");
+            //Debug.Log("PlayerExiste");
             isPlayerExist = true;
             
         }
@@ -287,27 +273,6 @@ public class Inventory : MonoBehaviour
         bancoDeDados.FecharConexao();
         return isPlayerExist;
     }
-
-    public void DeleteItemById(int itemId)
-    {
-        // Itera pelos slots de inventário para encontrar o item com o ID correspondente
-        for (int i = 0; i < inventorySlots.Length; i++)
-        {
-            // Verifica se o slot contém um item e se o ID do item corresponde ao ID passado
-            if (inventorySlots[i].myItem != null && inventorySlots[i].myItem.myItem.itemID == itemId)
-            {
-                // Remove o item do slot
-                Destroy(inventorySlots[i].myItem.gameObject);
-                inventorySlots[i].myItem = null; // Define o slot como vazio
-                UpdateListInventoryItens(); // Atualiza a lista de itens do inventário
-                return; // Termina a função após deletar o item
-            }
-        }
-
-        // Se o item não for encontrado no inventário, exibe um erro
-        Debug.LogError($"Item com ID {itemId} não encontrado no inventário.");
-    }
-
     public void ResetMissaoPlayer()
     {
         BancoDeDados bancoDeDados = new BancoDeDados();

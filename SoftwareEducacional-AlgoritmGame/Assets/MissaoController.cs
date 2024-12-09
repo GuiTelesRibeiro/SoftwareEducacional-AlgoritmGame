@@ -49,7 +49,7 @@ public class MissaoController : MonoBehaviour
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
         int idItemRecompensa = bancoDeDados.GetMissaoIdItem(missionID);
-        Debug.Log($"{idItemRecompensa}");
+        //Debug.Log($"{idItemRecompensa}");
         Item item = Inventory.Singleton.allItemsList[idItemRecompensa -1];
         spriteItem.sprite = item.sprite;
         nomeMissao.text = bancoDeDados.GetMissionName(missionID);
