@@ -64,7 +64,8 @@ public class MenuCanvasController : MonoBehaviour
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
         bancoDeDados.DeletePlayerById(playerId);
-        bancoDeDados.DeletarPlayerMissoes(playerId);
+        bancoDeDados.DeletarPlayerMissoes(playerId); 
+
         OpenMenu();
     }
     public void OpenMenu()

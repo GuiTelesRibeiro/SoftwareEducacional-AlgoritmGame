@@ -8,7 +8,7 @@ public class InputPlayerInfos : MonoBehaviour
     [SerializeField] TMP_InputField userName; // Campo para o nome do jogador
     [SerializeField] TMP_InputField idade;   // Campo para a idade do jogador
     [SerializeField] TMP_Text buttonText;
-    [SerializeField]  LoginCanvasCantroller LoginCanvasController;
+    [SerializeField]  LoginCanvasController loginCanvasController;
     //[SerializeField] TMP_InputField playerId; // Campo para o ID do jogador
 
     // Instância do banco de dados
@@ -24,7 +24,7 @@ public class InputPlayerInfos : MonoBehaviour
             return;
         }
         SubmitInfo();
-        //LoginCanvasController.DefaultPainels();--------------------------------------------------------
+        loginCanvasController.CutScene();
     }
     public void SubmitInfo()
     {
