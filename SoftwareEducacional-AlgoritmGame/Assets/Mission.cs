@@ -38,7 +38,11 @@ public class Mission : MonoBehaviour
         }
 
         if (isMissionCompleted == false && HaveItemInInventory(itensDoInventario))
+        {
             isMissionCompleted = true;
+            missoesController.FimDeJogo();
+        }
+            
 
         GameObjectsOn();
     }
@@ -66,7 +70,7 @@ public class Mission : MonoBehaviour
 
                 bancoDeDados.SalvarInventario(idPlayer ,itensDoInventario);
                 bancoDeDados.SetIsItemDelivered(idPlayer, idMission, 1);
-                missoesController.FimDeJogo();
+                
                 return true;
             }
         }

@@ -9,11 +9,22 @@ public class Player : MonoBehaviour
     private Vector2 move;
     [SerializeField] private float moveSpeed = 1;
     [SerializeField] private PlayerAnimController animController; // Referência ao controlador de animação
-
+    [SerializeField] Transform spawnAlternativo;
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
+    void Start()
+    {
+        // Procura pelo objeto "ItemSpawnCache"
+        GameObject obj = GameObject.Find("ItemSpawnCache");
+        if (obj != null)
+        {
+            // Caso o objeto seja encontrado, define a posição inicial do player para a posição do spawn alternativo
+            transform.position = spawnAlternativo.position;
+        }
+    }
+
 
     public void SetMoviment(InputAction.CallbackContext value)
     {

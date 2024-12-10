@@ -16,6 +16,9 @@ public class DialogueManager : MonoBehaviour
 
     private NPC currentNPC; // NPC com o qual o jogador está interagindo
     private Mission currentMission;
+    public bool missionPanel= false;
+
+
 
 
     public void OpenMission()
@@ -35,9 +38,17 @@ public class DialogueManager : MonoBehaviour
             isInteractionActive = true; // Marca o diálogo como ativo
             StartCoroutine(Typing());
         }
-
-
     }
+    public void OpenMissionPanel()
+    {
+
+        if (missionPanel) 
+        {
+            CanvasController.Singleton.OpenMissionPanel();
+        }
+    }
+
+
 
     public void ZeroText()
     {
@@ -93,6 +104,10 @@ public class DialogueManager : MonoBehaviour
             //Debug.Log("Mission");
             currentMission = collision.GetComponent<Mission>();
         }
+        if (collision.CompareTag("MP"))
+        {
+            missionPanel = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -108,5 +123,10 @@ public class DialogueManager : MonoBehaviour
             //Debug.Log("Mission");
             currentMission =null;
         }
+        if (collision.CompareTag("MP"))
+        {
+            missionPanel=false;
+        }
+
     }
 }

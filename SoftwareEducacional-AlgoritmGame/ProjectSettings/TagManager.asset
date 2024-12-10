@@ -8,6 +8,7 @@ TagManager:
   - Objective
   - Mission
   - Interaction
+  - MP
   layers:
   - Default
   - TransparentFX
