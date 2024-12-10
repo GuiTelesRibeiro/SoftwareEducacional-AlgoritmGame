@@ -1,27 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class MenuCanvasController : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] GameObject jogarPainel;
     [SerializeField] GameObject opcoesPainel;
     [SerializeField] GameObject sobrePainel;
     [SerializeField] GameObject creditosPainel;
     [SerializeField] GameObject menuPainel;
     [SerializeField] GameObject updateDataPainel;
-    [SerializeField] GameObject createAccountPainel;
+    [SerializeField] GameObject resetAlert;
+    [SerializeField] string nomeDaCenadoJogo;
+    [SerializeField] string nomeDaCenadaIntroducao;
 
     void Start()
     {
-        if (ExistAccount())
-        {
+
             OpenMenu();
-            Debug.Log("CONTA ENCONTRADA");
-            return;
-        }
-        OpenCreateAccount();
+
     }
 
 
@@ -34,7 +33,6 @@ public class MenuCanvasController : MonoBehaviour
 
         dados.Close(); // Fecha o leitor para liberar recursos.
         bancoDeDados.FecharConexao(); // Fecha a conexão com o banco de dados.
-
         return existe;
     }
 
@@ -45,22 +43,29 @@ public class MenuCanvasController : MonoBehaviour
         opcoesPainel.SetActive(false);
         sobrePainel.SetActive(false);
         creditosPainel.SetActive(false);
-        jogarPainel.SetActive(false);
         updateDataPainel.SetActive(false);
-        createAccountPainel.SetActive(false);
+        resetAlert.SetActive(false);
     }
     // Update is called once per frame
-
-    public void OpenCreateAccount()
-    {
-        ResetPainel();
-        createAccountPainel.SetActive(true);
-    }
     public void OpenUpdateDataPainel()
     {
         ResetPainel();
         updateDataPainel.SetActive(true);
 
+    }
+
+    public void OpenResetAlert()
+    {
+        ResetPainel();
+        resetAlert.SetActive(true);
+    }
+
+    public void ResetGame(int playerId)
+    {
+        BancoDeDados bancoDeDados = new BancoDeDados();
+        bancoDeDados.DeletePlayerById(playerId);
+        bancoDeDados.DeletarPlayerMissoes(playerId);
+        OpenMenu();
     }
     public void OpenMenu()
     {
@@ -83,10 +88,14 @@ public class MenuCanvasController : MonoBehaviour
         ResetPainel();
         creditosPainel.SetActive(true);
     }
-    public void OpenJogar()
+    public void Jogar()
     {
-        ResetPainel();
-        jogarPainel.SetActive(true);
+        if (ExistAccount())
+        {
+            SceneManager.LoadScene(nomeDaCenadoJogo);
+            return;
+        }
+        SceneManager.LoadScene(nomeDaCenadaIntroducao);
     }
 
     public void QuitGame()

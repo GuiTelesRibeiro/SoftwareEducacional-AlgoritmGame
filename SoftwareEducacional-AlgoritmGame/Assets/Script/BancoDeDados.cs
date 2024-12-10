@@ -63,6 +63,50 @@ public class BancoDeDados
         }
         return conexaoBanco;
     }
+
+    public void DeletePlayerById(int playerId)
+    {
+        // Abre conexão com o banco de dados
+        IDbConnection bancoDeDados = criarEAbrirBancoDeDados();
+
+        try
+        {
+            // Cria o comando para deletar o jogador
+            using (IDbCommand comandoDeletar = bancoDeDados.CreateCommand())
+            {
+                comandoDeletar.CommandText = "DELETE FROM Player WHERE id_Player = @playerId";
+
+                // Adiciona o parâmetro para evitar SQL Injection
+                var parametro = comandoDeletar.CreateParameter();
+                parametro.ParameterName = "@playerId";
+                parametro.Value = playerId;
+                comandoDeletar.Parameters.Add(parametro);
+
+                // Executa o comando
+                int linhasAfetadas = comandoDeletar.ExecuteNonQuery();
+
+                // Feedback opcional
+                if (linhasAfetadas > 0)
+                {
+                    Console.WriteLine($"Jogador com ID {playerId} foi removido com sucesso.");
+                }
+                else
+                {
+                    Console.WriteLine($"Nenhum jogador encontrado com ID {playerId}.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao deletar o jogador: {ex.Message}");
+        }
+        finally
+        {
+            // Fecha a conexão com o banco
+            bancoDeDados.Close();
+        }
+    }
+
     public void InserirOuAtualizarPlayer(int id, string nome, int idade)
     {
         BancoDados = criarEAbrirBancoDeDados();
@@ -232,6 +276,49 @@ public class BancoDeDados
 
         comando.ExecuteNonQuery();
         BancoDados.Close();
+    }
+
+    public void DeletarPlayerMissoes(int playerId)
+    {
+        // Abre a conexão com o banco de dados
+        IDbConnection bancoDeDados = criarEAbrirBancoDeDados();
+
+        try
+        {
+            // Cria o comando para deletar todas as missões vinculadas ao playerId
+            using (IDbCommand comando = bancoDeDados.CreateCommand())
+            {
+                comando.CommandText = "DELETE FROM Player_Missao WHERE ID_Player = @playerId";
+
+                // Adiciona o parâmetro para evitar SQL Injection
+                IDbDataParameter paramPlayer = comando.CreateParameter();
+                paramPlayer.ParameterName = "@playerId";
+                paramPlayer.Value = playerId;
+                comando.Parameters.Add(paramPlayer);
+
+                // Executa o comando
+                int linhasAfetadas = comando.ExecuteNonQuery();
+
+                // Feedback opcional
+                if (linhasAfetadas > 0)
+                {
+                    Console.WriteLine($"Todas as missões do jogador com ID {playerId} foram removidas com sucesso.");
+                }
+                else
+                {
+                    Console.WriteLine($"Nenhuma missão encontrada para o jogador com ID {playerId}.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao deletar missões do jogador: {ex.Message}");
+        }
+        finally
+        {
+            // Fecha a conexão com o banco de dados
+            bancoDeDados.Close();
+        }
     }
 
     public bool VerificarPlayerMissaoExiste(int IDPlayer, int IDMissao)
