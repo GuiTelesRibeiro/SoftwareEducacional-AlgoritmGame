@@ -7,6 +7,7 @@ public class PlayerAnimController : MonoBehaviour
     private Animator _animator;
     private Vector2 move;
     private string lastDirection = "Down"; // Direção padrão inicial
+    [SerializeField] AudioSource Walk;
 
     private void Awake()
     {
@@ -23,6 +24,7 @@ public class PlayerAnimController : MonoBehaviour
     {
         if (move.magnitude > 0.1f) // Se houver movimento
         {
+            Walk.mute = false;
             if (Mathf.Abs(move.x) > Mathf.Abs(move.y))
             {
                 // Movimentação lateral
@@ -45,6 +47,7 @@ public class PlayerAnimController : MonoBehaviour
         }
         else
         {
+            Walk.mute = true;
             // Idle Animation com base na última direção
             PlayIdleAnimation();
         }

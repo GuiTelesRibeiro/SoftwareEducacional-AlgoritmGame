@@ -15,27 +15,30 @@ EditorBuildSettings:
     path: Assets/Scenes/Main.unity
     guid: 7c78a2d88f55c0c47a1d80e794e7b5ba
   - enabled: 1
-    path: Assets/Scenes/Missoes/Missao1.unity
+    path: Assets/Scenes/Missoes/Missao.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Scenes/Missoes/Missao2.unity
-    guid: 145875ff81e0e704b98a6440859c3c5f
+    path: Assets/Scenes/Missoes/Missao 1.unity
+    guid: 7f7bf52d12168954eb6167e12c7f17e3
   - enabled: 1
-    path: Assets/Scenes/Missoes/Missao3.unity
-    guid: 8921775832bd85a48af2ab2c1fdac125
+    path: Assets/Scenes/Missoes/Missao 2.unity
+    guid: 2913f1a120a0a504dbd986dffd8f09e4
   - enabled: 1
-    path: Assets/Scenes/Missoes/Missao4.unity
-    guid: c1a9088757e91d84bbad371d1e33f162
+    path: Assets/Scenes/Missoes/Missao 3.unity
+    guid: d22e0c83ba5b648469d94ec64c57d2e9
   - enabled: 1
-    path: Assets/Scenes/Missoes/Missao5.unity
-    guid: 9f631f3ed7879a64594e5f7bd243d707
+    path: Assets/Scenes/Missoes/Missao 4.unity
+    guid: 75ed7190d8560154babe044dad3cd234
   - enabled: 1
-    path: Assets/Scenes/Missoes/Missao6.unity
-    guid: 84f68761515912d42a313c002b78835c
+    path: Assets/Scenes/Missoes/Missao 5.unity
+    guid: f7e69f369a1e9c04aaa1b0cbafe29b78
   - enabled: 1
-    path: Assets/Scenes/Missoes/Missao7.unity
-    guid: 8dbfc8cc3aa217546a4c79115a79e75e
+    path: Assets/Scenes/Missoes/Missao 6.unity
+    guid: f880496948940684fb2490cfac666f6e
   - enabled: 1
-    path: Assets/Scenes/Missoes/Missao8.unity
-    guid: 1039d8644a702724487fe1f2e9cb5c67
+    path: Assets/Scenes/Missoes/Missao 7.unity
+    guid: b4d3110c2c2a7f840a9c896e385e21d4
+  - enabled: 1
+    path: Assets/Scenes/Missoes/Missao 8.unity
+    guid: a9ab793cc7f2a094e8dc7e2a8d0c1658
   m_configObjects: {}

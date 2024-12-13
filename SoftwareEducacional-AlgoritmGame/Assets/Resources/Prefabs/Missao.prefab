@@ -61,7 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 0.87058824}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.87058824}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -574,6 +574,11 @@ MonoBehaviour:
   pendentePanel: {fileID: 152578389649800785}
   itemImage: {fileID: 6154729528575604978}
   missionNameTMP: {fileID: 4844125162473574825}
+  idPlayer: 1
+  idMission: 0
+  isMissionCompleted: 0
+  missoesController: {fileID: 0}
+  Sucess: {fileID: 0}
 --- !u!1 &4233073796643915034
 GameObject:
   m_ObjectHideFlags: 0

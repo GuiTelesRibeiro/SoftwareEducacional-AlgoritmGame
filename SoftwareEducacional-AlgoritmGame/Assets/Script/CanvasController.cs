@@ -11,6 +11,8 @@ public class CanvasController : MonoBehaviour
     [SerializeField] GameObject UiPanel;
     [SerializeField] GameObject MenuPanel;
     [SerializeField] GameObject MisisonPanel;
+    [SerializeField] GameObject EndGamePanel;
+    [SerializeField] GameObject TutorialPanels;
     
     void Awake()
     {
@@ -18,10 +20,24 @@ public class CanvasController : MonoBehaviour
         TouchControllPanel.SetActive(Application.isMobilePlatform);
 
     }
+
+
+    public void OpenEndGame()
+    {
+        ResetPanel();
+        EndGamePanel.SetActive(true);
+    }
     private void Start()
     {
+        GameObject obj = GameObject.Find("FirstLogin");
+        if (obj != null)
+        {
+            OpenTutorialPanel();
+            Destroy(obj);
+            return;
+        }
         DefaultPainels();
-    }
+    } 
     void Update()
     {
         if (DialoguePanel.activeSelf)
@@ -29,6 +45,13 @@ public class CanvasController : MonoBehaviour
             UiPanel.SetActive(false);
             return;
         }
+    }
+
+    private void OpenTutorialPanel()
+    {
+        ResetPanel();
+        TutorialPanels.SetActive(true);
+
     }
 
     public void ResetPanel()
@@ -40,7 +63,8 @@ public class CanvasController : MonoBehaviour
         UiPanel.SetActive(false);
         MenuPanel.SetActive(false);
         MisisonPanel.SetActive(false);
-
+        EndGamePanel.SetActive(false);
+        TutorialPanels.SetActive(false);
     }
 
     public void OpenMissionPanel()
