@@ -22,6 +22,7 @@ public class MissaoController : MonoBehaviour
     }
     private void OnEnable()
     {
+        FecharMissaoPanel();
         UpdateMaiorPlayerMissionCompleta();
     }
 
