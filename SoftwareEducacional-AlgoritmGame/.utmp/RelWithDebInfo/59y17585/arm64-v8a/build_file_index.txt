@@ -1,0 +1,2 @@
+C:\Users\Gui_Tellez_\Documents\GitHub\SoftwareEducacional-AlgoritmGame\SoftwareEducacional-AlgoritmGame\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\Users\Gui_Tellez_\Documents\GitHub\SoftwareEducacional-AlgoritmGame\SoftwareEducacional-AlgoritmGame\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\FramePacing\CMakeLists.txt

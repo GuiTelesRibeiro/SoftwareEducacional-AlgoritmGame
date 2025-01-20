@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 move;
     [SerializeField] private float moveSpeed = 1;
-    [SerializeField] private PlayerAnimController animController; // Referência ao controlador de animação
+    [SerializeField] private PlayerAnimController animController; // Referï¿½ncia ao controlador de animaï¿½ï¿½o
     [SerializeField] Transform spawnAlternativo;
     private void Awake()
     {
@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
         GameObject obj = GameObject.Find("ItemSpawnCache");
         if (obj != null)
         {
-            // Caso o objeto seja encontrado, define a posição inicial do player para a posição do spawn alternativo
+            // Caso o objeto seja encontrado, define a posiï¿½ï¿½o inicial do player para a posiï¿½ï¿½o do spawn alternativo
             transform.position = spawnAlternativo.position;
         }
     }
@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
         move = value.ReadValue<Vector2>();
         //Debug.Log("Input recebido no Player: " + move);
 
-        // Enviar movimento ao controlador de animação
+        // Enviar movimento ao controlador de animaï¿½ï¿½o
         if (animController != null)
         {
             animController.UpdateMove(move);
@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Atualizar física do movimento
-        rb.velocity = move.normalized * moveSpeed;
+        // Atualizar fï¿½sica do movimento
+        rb.linearVelocity = move.normalized * moveSpeed;
     }
 }
