@@ -10,6 +10,7 @@ using System;
 public class DBAttempt
 {
     private IDbConnection BancoDados;
+
     private string ObterCaminhoBanco()
     {
         string origem = System.IO.Path.Combine(Application.streamingAssetsPath, "DB.db");
@@ -36,76 +37,113 @@ public class DBAttempt
             }
             else
             {
-                // No PC ou iOS, pode-se copiar diretamente
                 System.IO.File.Copy(origem, destino);
             }
         }
 
-        //Debug.Log($"{destino}");
         return destino;
     }
+
     private IDbConnection criarEAbrirBancoDeDados()
     {
-        string caminhoBanco = ObterCaminhoBanco(); // Use o novo método
+        string caminhoBanco = ObterCaminhoBanco();
         string idburi = $"URI=file:{caminhoBanco}";
         IDbConnection conexaoBanco = new SqliteConnection(idburi);
         conexaoBanco.Open();
         using (var comandoCriarTabelas = conexaoBanco.CreateCommand())
         {
             comandoCriarTabelas.CommandText = @"
-            CREATE TABLE IF NOT EXISTS Player (
-                id_Player INTEGER PRIMARY KEY AUTOINCREMENT,
-                Player_Name TEXT,
-                Player_Idade INTEGER,
-                Player_Inventory_Items BLOB
+            CREATE TABLE IF NOT EXISTS Attempt (
+                id_attempt INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_player INT NOT NULL,
+                id_missao INT NOT NULL,
+                is_first_attempt BOOLEAN NOT NULL,
+                number_of_commands INT NOT NULL,
+                time_to_recive INT NOT NULL,
+                is_failed_attempt BOOLEAN NOT NULL,
+                time_data DATETIME NOT NULL,
+                FOREIGN KEY (id_player) REFERENCES Player(id_player),
+                FOREIGN KEY (id_missao) REFERENCES Level(id_level)
             );";
             comandoCriarTabelas.ExecuteNonQuery();
         }
         return conexaoBanco;
     }
 
-    public void SetAttemptData()
+    public void SetAttemptData(int id_player, int id_missao, bool is_first_attempt, int number_of_commands, int time_to_recive, bool is_failed_attempt, DateTime time_data)
     {
-        ////Attempt
-        //id_attempt
-        //id_player
-        //id_missao
-        //is_first_attempt
-        //number_of_commands
-        //time_to_recive
-        //is_failed_attenpts
-        //time_data
+        BancoDados = criarEAbrirBancoDeDados();
+        using (var comando = BancoDados.CreateCommand())
+        {
+            comando.CommandText = @"
+            INSERT INTO Attempt (id_player, id_missao, is_first_attempt, number_of_commands, time_to_recive, is_failed_attempt, time_data)
+            VALUES (@id_player, @id_missao, @is_first_attempt, @number_of_commands, @time_to_recive, @is_failed_attempt, @time_data);";
+
+            comando.Parameters.Add(new SqliteParameter("@id_player", id_player));
+            comando.Parameters.Add(new SqliteParameter("@id_missao", id_missao));
+            comando.Parameters.Add(new SqliteParameter("@is_first_attempt", is_first_attempt));
+            comando.Parameters.Add(new SqliteParameter("@number_of_commands", number_of_commands));
+            comando.Parameters.Add(new SqliteParameter("@time_to_recive", time_to_recive));
+            comando.Parameters.Add(new SqliteParameter("@is_failed_attempt", is_failed_attempt));
+            comando.Parameters.Add(new SqliteParameter("@time_data", time_data.ToString("yyyy-MM-dd HH:mm:ss")));
+
+            comando.ExecuteNonQuery();
+        }
+        BancoDados.Close();
     }
-    public int GetAttempt_Id_attempt()
+
+    public int GetAttempt_Id_Player(int id_attempt)
     {
-        return 0;
+        return GetValue<int>("id_player", id_attempt);
     }
-    public int GetAttempt_Id_Player()
+
+    public int GetAttempt_Id_Missao(int id_attempt)
     {
-        return 0;
+        return GetValue<int>("id_missao", id_attempt);
     }
-    public int GetAttempt_Id_Missao()
+
+    public bool GetAttempt_Is_First_Attempt(int id_attempt)
     {
-        return 0;
+        return GetValue<bool>("is_first_attempt", id_attempt);
     }
-    public bool GetAttempt_Is_First_Attempt()
+
+    public int GetAttempt_Number_Of_Commands(int id_attempt)
     {
-        return false;
+        return GetValue<int>("number_of_commands", id_attempt);
     }
-    public int GetAttempt_Number_Of_Commands()
+
+    public int GetAttempt_Time_To_Recive(int id_attempt)
     {
-        return 0;
+        return GetValue<int>("time_to_recive", id_attempt);
     }
-    public int GetAttempt_Time_To_Recive()
+
+    public bool GetAttempt_Is_Failed_Attempt(int id_attempt)
     {
-        return 0;
+        return GetValue<bool>("is_failed_attempt", id_attempt);
     }
-    public bool GetAttempt_Is_Failed_Attenpts()
+
+    public DateTime? GetAttempt_Time_Data(int id_attempt)
     {
-        return false;
+        return GetValue<DateTime?>("time_data", id_attempt);
     }
-    public int GetAttempt_Time_Data()
+
+    private T GetValue<T>(string columnName, int id_attempt)
     {
-        return 0;
+        BancoDados = criarEAbrirBancoDeDados();
+        using (var comando = BancoDados.CreateCommand())
+        {
+            comando.CommandText = $"SELECT {columnName} FROM Attempt WHERE id_attempt = @id_attempt;";
+            comando.Parameters.Add(new SqliteParameter("@id_attempt", id_attempt));
+
+            object result = comando.ExecuteScalar();
+            BancoDados.Close();
+
+            if (result != null && result != DBNull.Value)
+            {
+                return (T)Convert.ChangeType(result, typeof(T), CultureInfo.InvariantCulture);
+            }
+            return default;
+        }
     }
 }
+

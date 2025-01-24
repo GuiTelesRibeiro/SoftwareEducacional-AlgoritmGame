@@ -1,566 +1,113 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Data;
-using Mono.Data.Sqlite;
-using System.Globalization;
-using UnityEngine.Networking;
 using System;
 
 public class BancoDeDados
 {
-    private IDbConnection BancoDados;
-    private string ObterCaminhoBanco()
+    private DBPlayer dbPlayer;
+    private DBLevel dbLevel;
+    private DBAttempt dbAttempt;
+
+    public BancoDeDados()
     {
-        string origem = System.IO.Path.Combine(Application.streamingAssetsPath, "DB.db");
-        string destino = System.IO.Path.Combine(Application.persistentDataPath, "DB.db");
-
-        if (!System.IO.File.Exists(destino))
-        {
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                using (UnityWebRequest www = UnityWebRequest.Get(origem))
-                {
-                    www.SendWebRequest();
-                    while (!www.isDone) { }
-
-                    if (www.result == UnityWebRequest.Result.Success)
-                    {
-                        System.IO.File.WriteAllBytes(destino, www.downloadHandler.data);
-                    }
-                    else
-                    {
-                        Debug.LogError($"Erro ao copiar banco de dados: {www.error}");
-                    }
-                }
-            }
-            else
-            {
-                // No PC ou iOS, pode-se copiar diretamente
-                System.IO.File.Copy(origem, destino);
-            }
-        }
-
-        //Debug.Log($"{destino}");
-        return destino;
-    }
-    private IDbConnection criarEAbrirBancoDeDados()
-    {
-        string caminhoBanco = ObterCaminhoBanco(); // Use o novo método
-        string idburi = $"URI=file:{caminhoBanco}";
-        IDbConnection conexaoBanco = new SqliteConnection(idburi);
-        conexaoBanco.Open();
-        using (var comandoCriarTabelas = conexaoBanco.CreateCommand())
-        {
-            comandoCriarTabelas.CommandText = @"
-            CREATE TABLE IF NOT EXISTS Player (
-                id_Player INTEGER PRIMARY KEY AUTOINCREMENT,
-                Player_Name TEXT,
-                Player_Idade INTEGER,
-                Player_Inventory__Items BLOB
-            );";
-            comandoCriarTabelas.ExecuteNonQuery();
-        }
-        return conexaoBanco;
+        dbPlayer = new DBPlayer();
+        dbLevel = new DBLevel();
+        dbAttempt = new DBAttempt();
     }
 
-    public void DeletePlayerById(int playerId)
+    // Métodos relacionados a Player
+    public void SetPlayerData(int id_player, string nome, int idade)
     {
-        // Abre conexão com o banco de dados
-        IDbConnection bancoDeDados = criarEAbrirBancoDeDados();
-
-        try
-        {
-            // Cria o comando para deletar o jogador
-            using (IDbCommand comandoDeletar = bancoDeDados.CreateCommand())
-            {
-                comandoDeletar.CommandText = "DELETE FROM Player WHERE id_Player = @playerId";
-
-                // Adiciona o parâmetro para evitar SQL Injection
-                var parametro = comandoDeletar.CreateParameter();
-                parametro.ParameterName = "@playerId";
-                parametro.Value = playerId;
-                comandoDeletar.Parameters.Add(parametro);
-
-                // Executa o comando
-                int linhasAfetadas = comandoDeletar.ExecuteNonQuery();
-
-                // Feedback opcional
-                if (linhasAfetadas > 0)
-                {
-                    Console.WriteLine($"Jogador com ID {playerId} foi removido com sucesso.");
-                }
-                else
-                {
-                    Console.WriteLine($"Nenhum jogador encontrado com ID {playerId}.");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erro ao deletar o jogador: {ex.Message}");
-        }
-        finally
-        {
-            // Fecha a conexão com o banco
-            bancoDeDados.Close();
-        }
+        dbPlayer.SetPlayerData(id_player, nome, idade);
     }
 
-    public void InserirOuAtualizarPlayer(int id, string nome, int idade)
+    public string GetPlayerName(int id_player)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand InserOuAtualizaDados = BancoDados.CreateCommand();
-        InserOuAtualizaDados.CommandText = $"SELECT COUNT(*) FROM Player WHERE id_Player = {id};";
-        int count = int.Parse(InserOuAtualizaDados.ExecuteScalar().ToString());
-        if (count > 0)
-        {
-            InserOuAtualizaDados.CommandText = $@"
-                UPDATE Player
-                SET Player_Name = '{nome}', Player_Idade = {idade}
-                WHERE id_Player = {id};";
-        }
-        else
-        {
-            InserOuAtualizaDados.CommandText = $@"
-                INSERT INTO Player (id_Player, Player_Name, Player_Idade)
-                VALUES ({id}, '{nome}', {idade});";
-        }
-
-        InserOuAtualizaDados.ExecuteNonQuery();
-        int[] InventarioVazio = new int[] { 0, 0, 0, 0, 0, 0, 0, 0,0 };
-        SalvarInventario(1, InventarioVazio);
-        BancoDados.Close();
-    }
-    public IDataReader LerPlayer(int id)
-    {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand ComandoLer = BancoDados.CreateCommand();
-        ComandoLer.CommandText = $"SELECT * FROM Player WHERE id_Player = {id};";
-        return ComandoLer.ExecuteReader();
+        return dbPlayer.GetPlayer_name(id_player);
     }
 
-    public void FecharConexao()
+    public int GetPlayerAge(int id_player)
     {
-        if (BancoDados != null && BancoDados.State != ConnectionState.Closed)
-        {
-            BancoDados.Close();
-        }
-    }
-    public void SalvarInventario(int id, int[] inventario)
-    {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand ComandoSalvar = BancoDados.CreateCommand();
-
-        // Converte o array de inteiros para um array de bytes
-        List<byte> blob = new List<byte>();
-        foreach (int numero in inventario)
-        {
-            blob.AddRange(System.BitConverter.GetBytes(numero));
-        }
-
-        ComandoSalvar.CommandText = $@"
-        UPDATE Player
-        SET Player_Inventory__Items = @Inventory
-        WHERE id_Player = {id};";
-
-        IDbDataParameter parametro = ComandoSalvar.CreateParameter();
-        parametro.ParameterName = "@Inventory";
-        parametro.Value = blob.ToArray(); // Passa o array de bytes como parâmetro
-        ComandoSalvar.Parameters.Add(parametro);
-
-        ComandoSalvar.ExecuteNonQuery();
-        BancoDados.Close();
-    }
-    public int[] LerInventario(int id)
-    {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand ComandoLer = BancoDados.CreateCommand();
-        ComandoLer.CommandText = $"SELECT Player_Inventory__Items FROM Player WHERE id_Player = {id};";
-
-        IDataReader reader = ComandoLer.ExecuteReader();
-        if (reader.Read() && !reader.IsDBNull(0))
-        {
-            // Lê os bytes do BLOB
-            byte[] blob = (byte[])reader["Player_Inventory__Items"];
-            List<int> inventario = new List<int>();
-
-            for (int i = 0; i < blob.Length; i += 4) // Um int ocupa 4 bytes
-            {
-                inventario.Add(System.BitConverter.ToInt32(blob, i));
-            }
-
-            reader.Close();
-            BancoDados.Close();
-            return inventario.ToArray();
-        }
-        reader.Close();
-        BancoDados.Close();
-        return new int[0]; // Retorna um array vazio se não encontrar dados
+        return dbPlayer.GetPlayer_age(id_player);
     }
 
-    // -------------------------------------------------------------------- MISSAO e MISSAO_PLAYER------------------------------------------------------------------------------
-
-    public int GetMissaoIdItem(int idMissao)
+    public string GetPlayerGrade(int id_player)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = $"SELECT ID_Item FROM Missao WHERE id_missao = {idMissao};";
-
-        IDataReader reader = comando.ExecuteReader();
-        int idItem = -1;
-        if (reader.Read())
-        {
-            idItem = reader.GetInt32(0);
-        }
-
-        reader.Close();
-        BancoDados.Close();
-        return idItem;
+        return dbPlayer.GetPlayer_grade(id_player);
     }
 
-    public string GetMissaoDescricao(int idMissao)
+    public void SetPlayerInventory(int id_player, int[] inventario)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = $"SELECT Descricao FROM Missao WHERE id_missao = {idMissao};";
-
-        IDataReader reader = comando.ExecuteReader();
-        string descricao = null;
-        if (reader.Read())
-        {
-            descricao = reader.GetString(0);
-        }
-
-        reader.Close();
-        BancoDados.Close();
-        return descricao;
+        dbPlayer.SetPlayer_Inventary_itens(id_player, inventario);
     }
 
-    public string GetMissionName(int idMissao)
+    public int[] GetPlayerInventory(int id_player)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = $"SELECT MissionName FROM Missao WHERE id_missao = {idMissao};";
-
-        IDataReader reader = comando.ExecuteReader();
-        string missionName = null;
-        if (reader.Read())
-        {
-            missionName = reader.GetString(0);
-        }
-
-        reader.Close();
-        BancoDados.Close();
-        return missionName;
+        return dbPlayer.GetPlayer_Inventary_itens(id_player);
     }
 
-    // Chat GPT Só altere códigos abaixo desta linha!!
-
-    public void CriarPlayerMissao(int IDPlayer, int IDMissao)
+    // Métodos relacionados a Level
+    public void SetLevelData(int id_level, int id_item_to_recive, string level_description)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = @"INSERT INTO Player_Missao (ID_Player, ID_Missao, Move_To_Complete, Number_Attempts, IsMissionComplete, isItemDelivered)
-                            VALUES (@IDPlayer, @IDMissao,  null, 0, 0, 0);";
-
-        IDbDataParameter paramPlayer = comando.CreateParameter();
-        paramPlayer.ParameterName = "@IDPlayer";
-        paramPlayer.Value = IDPlayer;
-        comando.Parameters.Add(paramPlayer);
-
-        IDbDataParameter paramMissao = comando.CreateParameter();
-        paramMissao.ParameterName = "@IDMissao";
-        paramMissao.Value = IDMissao;
-        comando.Parameters.Add(paramMissao);
-
-        comando.ExecuteNonQuery();
-        BancoDados.Close();
+        dbLevel.SetLevelData(id_level, id_item_to_recive, level_description);
     }
 
-    public void DeletarPlayerMissoes(int playerId)
+    public int GetLevelItemToReceive(int id_level)
     {
-        // Abre a conexão com o banco de dados
-        IDbConnection bancoDeDados = criarEAbrirBancoDeDados();
-
-        try
-        {
-            // Cria o comando para deletar todas as missões vinculadas ao playerId
-            using (IDbCommand comando = bancoDeDados.CreateCommand())
-            {
-                comando.CommandText = "DELETE FROM Player_Missao WHERE ID_Player = @playerId";
-
-                // Adiciona o parâmetro para evitar SQL Injection
-                IDbDataParameter paramPlayer = comando.CreateParameter();
-                paramPlayer.ParameterName = "@playerId";
-                paramPlayer.Value = playerId;
-                comando.Parameters.Add(paramPlayer);
-
-                // Executa o comando
-                int linhasAfetadas = comando.ExecuteNonQuery();
-
-                // Feedback opcional
-                if (linhasAfetadas > 0)
-                {
-                    Console.WriteLine($"Todas as missões do jogador com ID {playerId} foram removidas com sucesso.");
-                }
-                else
-                {
-                    Console.WriteLine($"Nenhuma missão encontrada para o jogador com ID {playerId}.");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erro ao deletar missões do jogador: {ex.Message}");
-        }
-        finally
-        {
-            // Fecha a conexão com o banco de dados
-            bancoDeDados.Close();
-        }
+        return dbLevel.GetLevel_Id_Item_To_Recive(id_level);
     }
 
-    public bool VerificarPlayerMissaoExiste(int IDPlayer, int IDMissao)
+    public string GetLevelDescription(int id_level)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "SELECT COUNT(*) FROM Player_Missao WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
-
-        IDbDataParameter paramPlayer = comando.CreateParameter();
-        paramPlayer.ParameterName = "@IDPlayer";
-        paramPlayer.Value = IDPlayer;
-        comando.Parameters.Add(paramPlayer);
-
-        IDbDataParameter paramMissao = comando.CreateParameter();
-        paramMissao.ParameterName = "@IDMissao";
-        paramMissao.Value = IDMissao;
-        comando.Parameters.Add(paramMissao);
-
-        object resultado = comando.ExecuteScalar();
-        BancoDados.Close();
-
-        // Convertendo o resultado para inteiro
-        int count = resultado != null && resultado != DBNull.Value ? Convert.ToInt32(resultado) : 0;
-
-        return count > 0 ? true : false;
+        return dbLevel.GetLevel_Level_Description(id_level);
     }
 
-
-    public int GetMove_To_Complete(int IDPlayer, int IDMissao)
+    // Métodos relacionados a Attempt
+    public void SetAttemptData(int id_player, int id_missao, bool is_first_attempt, int number_of_commands, int time_to_recive, bool is_failed_attempts, DateTime time_data)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "SELECT Move_To_Complete FROM Player_Missao WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
-
-        IDbDataParameter paramPlayer = comando.CreateParameter();
-        paramPlayer.ParameterName = "@IDPlayer";
-        paramPlayer.Value = IDPlayer;
-        comando.Parameters.Add(paramPlayer);
-
-        IDbDataParameter paramMissao = comando.CreateParameter();
-        paramMissao.ParameterName = "@IDMissao";
-        paramMissao.Value = IDMissao;
-        comando.Parameters.Add(paramMissao);
-
-        IDataReader reader = comando.ExecuteReader();
-        int moves = reader.Read() ? reader.GetInt32(0) : 0;
-
-        reader.Close();
-        BancoDados.Close();
-        return moves;
+        dbAttempt.SetAttemptData(id_player,  id_missao,  is_first_attempt,  number_of_commands,  time_to_recive,  is_failed_attempts, time_data);
     }
 
-    public void SetMove_To_Complete(int IDPlayer, int IDMissao, int moves)
+    public int GetAttemptPlayerId(int id_attempt)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "UPDATE Player_Missao SET Move_To_Complete = @moves WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
-
-        IDbDataParameter paramMoves = comando.CreateParameter();
-        paramMoves.ParameterName = "@moves";
-        paramMoves.Value = moves;
-        comando.Parameters.Add(paramMoves);
-
-        IDbDataParameter paramPlayer = comando.CreateParameter();
-        paramPlayer.ParameterName = "@IDPlayer";
-        paramPlayer.Value = IDPlayer;
-        comando.Parameters.Add(paramPlayer);
-
-        IDbDataParameter paramMissao = comando.CreateParameter();
-        paramMissao.ParameterName = "@IDMissao";
-        paramMissao.Value = IDMissao;
-        comando.Parameters.Add(paramMissao);
-
-        comando.ExecuteNonQuery();
-        BancoDados.Close();
+        return dbAttempt.GetAttempt_Id_Player(id_attempt);
     }
 
-    public int GetNumber_Attempts(int IDPlayer, int IDMissao)
+    public int GetAttemptMissionId(int id_attempt)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "SELECT Number_Attempts FROM Player_Missao WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
-
-        IDbDataParameter paramPlayer = comando.CreateParameter();
-        paramPlayer.ParameterName = "@IDPlayer";
-        paramPlayer.Value = IDPlayer;
-        comando.Parameters.Add(paramPlayer);
-
-        IDbDataParameter paramMissao = comando.CreateParameter();
-        paramMissao.ParameterName = "@IDMissao";
-        paramMissao.Value = IDMissao;
-        comando.Parameters.Add(paramMissao);
-
-        IDataReader reader = comando.ExecuteReader();
-        int attempts = reader.Read() ? reader.GetInt32(0) : 0;
-
-        reader.Close();
-        BancoDados.Close();
-        return attempts;
+        return dbAttempt.GetAttempt_Id_Missao(id_attempt);
     }
 
-    public void SetNumber_Attempts(int IDPlayer, int IDMissao, int attempts)
+    public bool GetAttemptIsFirst(int id_attempt)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "UPDATE Player_Missao SET Number_Attempts = @attempts WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
-
-        IDbDataParameter paramAttempts = comando.CreateParameter();
-        paramAttempts.ParameterName = "@attempts";
-        paramAttempts.Value = attempts;
-        comando.Parameters.Add(paramAttempts);
-
-        IDbDataParameter paramPlayer = comando.CreateParameter();
-        paramPlayer.ParameterName = "@IDPlayer";
-        paramPlayer.Value = IDPlayer;
-        comando.Parameters.Add(paramPlayer);
-
-        IDbDataParameter paramMissao = comando.CreateParameter();
-        paramMissao.ParameterName = "@IDMissao";
-        paramMissao.Value = IDMissao;
-        comando.Parameters.Add(paramMissao);
-
-        comando.ExecuteNonQuery();
-        BancoDados.Close();
+        return dbAttempt.GetAttempt_Is_First_Attempt(id_attempt);
     }
 
-    public int GetIsMissionComplete(int IDPlayer, int IDMissao)
+    public int GetAttemptNumberOfCommands(int id_attempt)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "SELECT IsMissionComplete FROM Player_Missao WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
-
-        IDbDataParameter paramPlayer = comando.CreateParameter();
-        paramPlayer.ParameterName = "@IDPlayer";
-        paramPlayer.Value = IDPlayer;
-        comando.Parameters.Add(paramPlayer);
-
-        IDbDataParameter paramMissao = comando.CreateParameter();
-        paramMissao.ParameterName = "@IDMissao";
-        paramMissao.Value = IDMissao;
-        comando.Parameters.Add(paramMissao);
-
-        IDataReader reader = comando.ExecuteReader();
-        int isComplete = reader.Read() ? reader.GetInt32(0) : 0;
-
-        reader.Close();
-        BancoDados.Close();
-        return isComplete;
+        return dbAttempt.GetAttempt_Number_Of_Commands(id_attempt);
     }
 
-    public void SetIsMissionComplete(int IDPlayer, int IDMissao, int isComplete)
+    public int GetAttemptTimeToReceive(int id_attempt)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "UPDATE Player_Missao SET IsMissionComplete = @isComplete WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
-
-        IDbDataParameter paramIsComplete = comando.CreateParameter();
-        paramIsComplete.ParameterName = "@isComplete";
-        paramIsComplete.Value = isComplete;
-        comando.Parameters.Add(paramIsComplete);
-
-        IDbDataParameter paramPlayer = comando.CreateParameter();
-        paramPlayer.ParameterName = "@IDPlayer";
-        paramPlayer.Value = IDPlayer;
-        comando.Parameters.Add(paramPlayer);
-
-        IDbDataParameter paramMissao = comando.CreateParameter();
-        paramMissao.ParameterName = "@IDMissao";
-        paramMissao.Value = IDMissao;
-        comando.Parameters.Add(paramMissao);
-
-        comando.ExecuteNonQuery();
-        BancoDados.Close();
-    }
-    //------------------------
-
-    public int GetIsItemDelivered(int IDPlayer, int IDMissao)
-    {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "SELECT isItemDelivered FROM Player_Missao WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
-
-        IDbDataParameter paramPlayer = comando.CreateParameter();
-        paramPlayer.ParameterName = "@IDPlayer";
-        paramPlayer.Value = IDPlayer;
-        comando.Parameters.Add(paramPlayer);
-
-        IDbDataParameter paramMissao = comando.CreateParameter();
-        paramMissao.ParameterName = "@IDMissao";
-        paramMissao.Value = IDMissao;
-        comando.Parameters.Add(paramMissao);
-
-        IDataReader reader = comando.ExecuteReader();
-        int isDelivered = reader.Read() ? reader.GetInt32(0) : 0;
-
-        reader.Close();
-        BancoDados.Close();
-        return isDelivered;
+        return dbAttempt.GetAttempt_Time_To_Recive(id_attempt);
     }
 
-    public void SetIsItemDelivered(int IDPlayer, int IDMissao, int isComplete)
+    public bool GetAttemptIsFailed(int id_attempt)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
-        comando.CommandText = "UPDATE Player_Missao SET isItemDelivered = @isComplete WHERE ID_Player = @IDPlayer AND ID_Missao = @IDMissao;";
-
-        IDbDataParameter paramIsComplete = comando.CreateParameter();
-        paramIsComplete.ParameterName = "@isComplete";
-        paramIsComplete.Value = isComplete;
-        comando.Parameters.Add(paramIsComplete);
-
-        IDbDataParameter paramPlayer = comando.CreateParameter();
-        paramPlayer.ParameterName = "@IDPlayer";
-        paramPlayer.Value = IDPlayer;
-        comando.Parameters.Add(paramPlayer);
-
-        IDbDataParameter paramMissao = comando.CreateParameter();
-        paramMissao.ParameterName = "@IDMissao";
-        paramMissao.Value = IDMissao;
-        comando.Parameters.Add(paramMissao);
-
-        comando.ExecuteNonQuery();
-        BancoDados.Close();
+        return dbAttempt.GetAttempt_Is_Failed_Attempt(id_attempt);
     }
 
-    //------------------------
-    public int GetMaiorIDMissao(int IDPlayer)
+    public DateTime? GetAttemptTimeData(int id_attempt)
     {
-        BancoDados = criarEAbrirBancoDeDados();
-        IDbCommand comando = BancoDados.CreateCommand();
+        return dbAttempt.GetAttempt_Time_Data(id_attempt);
+    }
 
-        // Consulta para pegar o maior ID_Missao onde IsMissionComplete == 1
-        comando.CommandText = $"SELECT MAX(ID_Missao) FROM Player_Missao WHERE ID_Player = {IDPlayer} AND IsMissionComplete = 1;";
-
-        object resultado = comando.ExecuteScalar();
-        BancoDados.Close();
-
-        if (resultado != null && resultado != DBNull.Value)
-        {
-            return Convert.ToInt32(resultado);
-        }
-
-        return 0;
+    // deixarei pronto para possível uso
+    public void InitializeDatabase()
+    {
+        dbPlayer = new DBPlayer();
+        dbLevel = new DBLevel();
+        dbAttempt = new DBAttempt();
     }
 }
