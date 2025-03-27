@@ -2,23 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UIElements;
 
 public class InputPlayerInfos : MonoBehaviour
 {
-    [SerializeField] TMP_InputField userName; // Campo para o nome do jogador
-    [SerializeField] TMP_InputField idade;   // Campo para a idade do jogador
+    [SerializeField] TMP_InputField userName;
+    [SerializeField] TMP_InputField idade;
+    int gradeNumber = -1;
     [SerializeField] TMP_Text buttonText;
     [SerializeField]  LoginCanvasController loginCanvasController;
-    //[SerializeField] TMP_InputField playerId; // Campo para o ID do jogador
+    [SerializeField] MenuCanvasController menuCanvasController;
 
-    // Instância do banco de dados
+    [SerializeField] int idPlayer = 1;
     private BancoDeDados bancoDeDados = new BancoDeDados();
-
-    // Função chamada quando o usuário envia as informações
 
     public void CreateAccount()
     {
-        if (userName.text == "" || idade.text == "")
+        if (userName.text == "" || idade.text == "" || gradeNumber == -1)
         {
             buttonText.text = "Não deixe campos vazios";
             return;
@@ -26,31 +26,41 @@ public class InputPlayerInfos : MonoBehaviour
         SubmitInfo();
         loginCanvasController.CutScene();
     }
+
+    public void UpdateAccount()
+    {
+        if (userName.text == "" || idade.text == "" || gradeNumber == -1)
+        {
+            buttonText.text = "Não deixe campos vazios";
+            return;
+        }
+        SubmitInfo();
+        menuCanvasController.OpenMenu();
+    }
     public void SubmitInfo()
     {
-        // Obtém os valores dos campos de entrada
         string nome = userName.text;
         int idadeJogador = int.Parse(idade.text);
-        //int idJogador = int.Parse(playerId.text);
-         int idJogador = 1;
-        // Insere ou atualiza os dados no banco
-        bancoDeDados.InserirOuAtualizarPlayer(idJogador, nome, idadeJogador);
-
-        // Lê os dados do jogador para exibição
-        var dados = bancoDeDados.LerPlayer(idJogador);
-
-        if (dados.Read()) // Se encontrou o registro
+        int idJogador = idPlayer;
+        int grade = gradeNumber;
+        bancoDeDados.SetOrUpdatePlayerData(idJogador, nome, idadeJogador, grade);
+        var dados = bancoDeDados.ReadPlayer(idJogador);
+        if (dados.Read())
         {
-            string nomeLido = dados["Player_Name"].ToString();
-            string idadeLida = dados["Player_Idade"].ToString();
-            Debug.Log($"Jogador atualizado/criado com sucesso! Nome: {nomeLido}, Idade: {idadeLida}");
+            string nomeLido = dados["name"].ToString();
+            string idadeLida = dados["age"].ToString();
+            string escolaridadeLida = dados["grade"].ToString();
+            Debug.Log($"Jogador atualizado/criado com sucesso! Nome: {nomeLido}, Idade: {idadeLida} , escolaridade: {escolaridadeLida}");
         }
         else
         {
             Debug.Log("Erro: Jogador não encontrado após inserção/atualização.");
         }
-
         dados.Close();
-        bancoDeDados.FecharConexao();
+    }
+
+    public void SetGrade(int grade)
+    {
+        gradeNumber = grade;
     }
 }

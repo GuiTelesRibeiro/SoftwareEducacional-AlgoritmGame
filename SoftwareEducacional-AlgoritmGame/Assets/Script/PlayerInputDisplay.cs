@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
+
 
 public class PlayerInputDisplay : MonoBehaviour
 {
     [SerializeField] private TMP_InputField userName; 
-    [SerializeField] private TMP_InputField userAge;  
-
+    [SerializeField] private TMP_InputField userAge;
+    int userGrade;
+    [SerializeField] InputPlayerInfos inputPlayerInfos;
     private BancoDeDados bancoDeDados = new BancoDeDados();
 
     void Start()
@@ -16,13 +19,16 @@ public class PlayerInputDisplay : MonoBehaviour
     }
     public void DisplayPlayerInfo(int playerId)
     {
-        var dados = bancoDeDados.LerPlayer(playerId);
+        var dados = bancoDeDados.ReadPlayer(playerId);
 
         if (dados.Read())
         {
             // Exibe as informações do jogador nos campos de texto
-            userName.text = $"{dados["Player_Name"].ToString()}";
-            userAge.text = $"{dados["Player_Idade"].ToString()}";
+            userName.text = $"{dados["name"].ToString()}";
+            userAge.text = $"{dados["age"].ToString()}";
+            userGrade = Convert.ToInt32(dados["grade"]);
+
+            inputPlayerInfos.SetGrade(userGrade);
         }
         else
         {
@@ -32,6 +38,6 @@ public class PlayerInputDisplay : MonoBehaviour
         }
 
         dados.Close();
-        bancoDeDados.FecharConexao();
+        bancoDeDados.CloseDatabase();
     }
 }

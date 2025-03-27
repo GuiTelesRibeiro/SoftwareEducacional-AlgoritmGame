@@ -70,14 +70,18 @@ public class DBAttempt
         return conexaoBanco;
     }
 
-    public void SetAttemptData(int id_player, int id_missao, bool is_first_attempt, int number_of_commands, int time_to_recive, bool is_failed_attempt, DateTime time_data)
+    public int SetAttemptData(int id_player, int id_missao, bool is_first_attempt, int number_of_commands, int time_to_recive, bool is_failed_attempt, DateTime time_data)
     {
+        int attemptId = -1;
+
         BancoDados = criarEAbrirBancoDeDados();
         using (var comando = BancoDados.CreateCommand())
         {
             comando.CommandText = @"
             INSERT INTO Attempt (id_player, id_missao, is_first_attempt, number_of_commands, time_to_recive, is_failed_attempt, time_data)
-            VALUES (@id_player, @id_missao, @is_first_attempt, @number_of_commands, @time_to_recive, @is_failed_attempt, @time_data);";
+            VALUES (@id_player, @id_missao, @is_first_attempt, @number_of_commands, @time_to_recive, @is_failed_attempt, @time_data);
+
+            SELECT last_insert_rowid();";
 
             comando.Parameters.Add(new SqliteParameter("@id_player", id_player));
             comando.Parameters.Add(new SqliteParameter("@id_missao", id_missao));
@@ -87,9 +91,11 @@ public class DBAttempt
             comando.Parameters.Add(new SqliteParameter("@is_failed_attempt", is_failed_attempt));
             comando.Parameters.Add(new SqliteParameter("@time_data", time_data.ToString("yyyy-MM-dd HH:mm:ss")));
 
-            comando.ExecuteNonQuery();
+            attemptId = Convert.ToInt32(comando.ExecuteScalar());
         }
         BancoDados.Close();
+
+        return attemptId;
     }
 
     public int GetAttempt_Id_Player(int id_attempt)
@@ -145,5 +151,52 @@ public class DBAttempt
             return default;
         }
     }
+    public void CloseDatabase()
+    {
+        if (BancoDados != null && BancoDados.State != ConnectionState.Closed)
+        {
+            BancoDados.Close();
+            BancoDados = null; // Libera o recurso para evitar vazamentos
+            Debug.Log("Banco de dados fechado com sucesso.");
+        }
+    }
+    public void DeleteAttemptByPlayer(int playerId)
+    {
+        BancoDados = criarEAbrirBancoDeDados();
+        using (var comando = BancoDados.CreateCommand())
+        {
+            comando.CommandText = "DELETE FROM Attempt WHERE id_player = @playerId;";
+            comando.Parameters.Add(new SqliteParameter("@playerId", playerId));
+
+            int rowsAffected = comando.ExecuteNonQuery(); // Retorna o número de linhas afetadas
+            Debug.Log($"{rowsAffected} tentativas deletadas para o jogador com ID {playerId}.");
+        }
+        BancoDados.Close();
+    }
+    public int GetHighestSuccessfulLevelId(int playerId)
+    {
+        BancoDados = criarEAbrirBancoDeDados();
+        using (var comando = BancoDados.CreateCommand())
+        {
+            comando.CommandText = @"
+        SELECT MAX(id_missao) 
+        FROM Attempt 
+        WHERE id_player = @playerId AND is_failed_attempt = 0;";
+
+            comando.Parameters.Add(new SqliteParameter("@playerId", playerId));
+
+            object result = comando.ExecuteScalar();
+            BancoDados.Close();
+
+            if (result != null && result != DBNull.Value)
+            {
+                return Convert.ToInt32(result);
+            }
+
+            return 0;
+        }
+    }
+
+
 }
 

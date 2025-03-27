@@ -57,26 +57,45 @@ public class DBPlayer
                 id_player INTEGER PRIMARY KEY AUTOINCREMENT,
                 name VARCHAR(100) NOT NULL,
                 age INT NOT NULL,
-                grade VARCHAR(50) NOT NULL,
-                inventory_items BLOB
+                grade INT NOT NULL,
+                inventory_items BLOB,
+                itens_delivered_list BLOB
             );";
             comandoCriarTabelas.ExecuteNonQuery();
         }
         return conexaoBanco;
     }
 
-    public void SetPlayerData(int id_player, string nome, int idade, string grade = "No grade")
+    public void SetOrUpdatePlayerData(int id_player, string nome, int idade, int grade)
     {
         BancoDados = criarEAbrirBancoDeDados();
+
+        // Verifica se o jogador já existe
+        bool jogadorExiste = false;
+        using (IDbCommand checkCommand = BancoDados.CreateCommand())
+        {
+            checkCommand.CommandText = "SELECT COUNT(*) FROM Player WHERE id_player = @id_player";
+            checkCommand.Parameters.Add(new SqliteParameter("@id_player", id_player));
+            jogadorExiste = Convert.ToInt32(checkCommand.ExecuteScalar()) > 0;
+        }
+
         using (IDbCommand comando = BancoDados.CreateCommand())
         {
-            comando.CommandText = $@"
-            INSERT INTO Player (id_player, name, age, grade)
-            VALUES (@id_player, @name, @age, @grade)
-            ON CONFLICT(id_player) DO UPDATE SET
-                name = @name,
-                age = @age,
-                grade = @grade;";
+            if (jogadorExiste)
+            {
+                // Atualiza se já existir
+                comando.CommandText = @"
+                UPDATE Player 
+                SET name = @name, age = @age, grade = @grade 
+                WHERE id_player = @id_player";
+            }
+            else
+            {
+                // Insere um novo jogador se não existir
+                comando.CommandText = @"
+                INSERT INTO Player (id_player, name, age, grade) 
+                VALUES (@id_player, @name, @age, @grade)";
+            }
 
             comando.Parameters.Add(new SqliteParameter("@id_player", id_player));
             comando.Parameters.Add(new SqliteParameter("@name", nome));
@@ -86,9 +105,11 @@ public class DBPlayer
         }
 
         int[] inventarioVazio = new int[9]; // Inventário inicial vazio
-        SetPlayer_Inventary_itens(id_player, inventarioVazio);
+        SetPlayer_Inventory_itens(id_player, inventarioVazio);
+
         BancoDados.Close();
     }
+
 
     public string GetPlayer_name(int id_player)
     {
@@ -105,7 +126,92 @@ public class DBPlayer
         return GetValue<string>("grade", id_player);
     }
 
-    public void SetPlayer_Inventary_itens(int id_player, int[] inventario)
+    public bool GetIsItemDelivered(int id_Player, int id_item_to_delivered)
+    {
+        BancoDados = criarEAbrirBancoDeDados();
+        using (IDbCommand comando = BancoDados.CreateCommand())
+        {
+            comando.CommandText = "SELECT itens_delivered_list FROM Player WHERE id_player = @id_Player;";
+            comando.Parameters.Add(new SqliteParameter("@id_Player", id_Player));
+
+            using (IDataReader reader = comando.ExecuteReader())
+            {
+                if (reader.Read() && !reader.IsDBNull(0))
+                {
+                    byte[] blob = (byte[])reader["itens_delivered_list"];
+                    List<int> itensEntregues = new List<int>();
+
+                    for (int i = 0; i < blob.Length; i += 4) // Cada int ocupa 4 bytes
+                    {
+                        itensEntregues.Add(BitConverter.ToInt32(blob, i));
+                    }
+
+                    reader.Close();
+                    BancoDados.Close();
+
+                    // Verifica se o item já foi entregue
+                    return itensEntregues.Contains(id_item_to_delivered);
+                }
+            }
+        }
+        BancoDados.Close();
+        return false; // Retorna falso caso não haja itens entregues
+    }
+
+    public void SetItemDelivered(int id_Player, int id_item_to_delivered)
+    {
+        BancoDados = criarEAbrirBancoDeDados();
+        List<int> itensEntregues = new List<int>();
+
+        // Obtém os itens já entregues
+        using (IDbCommand comando = BancoDados.CreateCommand())
+        {
+            comando.CommandText = "SELECT itens_delivered_list FROM Player WHERE id_player = @id_Player;";
+            comando.Parameters.Add(new SqliteParameter("@id_Player", id_Player));
+
+            using (IDataReader reader = comando.ExecuteReader())
+            {
+                if (reader.Read() && !reader.IsDBNull(0))
+                {
+                    byte[] blob = (byte[])reader["itens_delivered_list"];
+                    for (int i = 0; i < blob.Length; i += 4)
+                    {
+                        itensEntregues.Add(BitConverter.ToInt32(blob, i));
+                    }
+                }
+            }
+        }
+
+        // Adiciona o novo item à lista, se ainda não estiver presente
+        if (!itensEntregues.Contains(id_item_to_delivered))
+        {
+            itensEntregues.Add(id_item_to_delivered);
+        }
+
+        // Converte a lista para um array de bytes
+        List<byte> blobAtualizado = new List<byte>();
+        foreach (int item in itensEntregues)
+        {
+            blobAtualizado.AddRange(BitConverter.GetBytes(item));
+        }
+
+        // Atualiza a tabela no banco de dados
+        using (IDbCommand comando = BancoDados.CreateCommand())
+        {
+            comando.CommandText = @"
+        UPDATE Player
+        SET itens_delivered_list = @ItensDelivered
+        WHERE id_player = @id_Player;";
+
+            comando.Parameters.Add(new SqliteParameter("@id_Player", id_Player));
+            comando.Parameters.Add(new SqliteParameter("@ItensDelivered", blobAtualizado.ToArray()));
+
+            comando.ExecuteNonQuery();
+        }
+        BancoDados.Close();
+    }
+
+    public void SetPlayer_Inventory_itens(int id_player, int[] inventario)
     {
         BancoDados = criarEAbrirBancoDeDados();
         using (IDbCommand comando = BancoDados.CreateCommand())
@@ -129,7 +235,7 @@ public class DBPlayer
         BancoDados.Close();
     }
 
-    public int[] GetPlayer_Inventary_itens(int id_player)
+    public int[] GetPlayer_Inventory_itens(int id_player)
     {
         BancoDados = criarEAbrirBancoDeDados();
         using (IDbCommand comando = BancoDados.CreateCommand())
@@ -178,4 +284,39 @@ public class DBPlayer
             return default;
         }
     }
+
+    public IDataReader ReadPlayer(int id)
+    {
+        BancoDados = criarEAbrirBancoDeDados();
+        IDbCommand ComandoLer = BancoDados.CreateCommand();
+        ComandoLer.CommandText = $"SELECT * FROM Player WHERE id_Player = {id};";
+        return ComandoLer.ExecuteReader();
+    }
+
+    public void CloseDatabase()
+    {
+        if (BancoDados != null && BancoDados.State != ConnectionState.Closed)
+        {
+            BancoDados.Close();
+            BancoDados = null; // Libera o recurso para evitar vazamentos
+            Debug.Log("Banco de dados fechado com sucesso.");
+        }
+    }
+    public void DeletePlayerById(int playerId)
+    {
+        BancoDados = criarEAbrirBancoDeDados();
+        using (IDbCommand comando = BancoDados.CreateCommand())
+        {
+            comando.CommandText = "DELETE FROM Player WHERE id_player = @playerId;";
+            comando.Parameters.Add(new SqliteParameter("@playerId", playerId));
+
+            int rowsAffected = comando.ExecuteNonQuery(); // Retorna o número de linhas afetadas
+            Debug.Log($"{rowsAffected} jogador(es) deletado(s) com o ID {playerId}.");
+        }
+        BancoDados.Close();
+    }
+
+
+
+
 }

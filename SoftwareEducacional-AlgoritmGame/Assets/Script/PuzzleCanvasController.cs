@@ -8,6 +8,7 @@ public class PuzzleCanvasController : MonoBehaviour
 {
 
     [SerializeField] GameObject victoryPanel;
+
     [SerializeField] GameObject losePanel;
     [SerializeField] GameObject tutorialPanel;
     [SerializeField] GameObject puzzlePainel;
@@ -35,6 +36,8 @@ public class PuzzleCanvasController : MonoBehaviour
             bancoDeDados.CriarPlayerMissao(IdPlayer, IdMissao);
         }
         imageItem.sprite = allListItem[bancoDeDados.GetMissaoIdItem(IdMissao)-1].sprite;
+
+        // iniciar Attempt 
     }
     void Start()
     {

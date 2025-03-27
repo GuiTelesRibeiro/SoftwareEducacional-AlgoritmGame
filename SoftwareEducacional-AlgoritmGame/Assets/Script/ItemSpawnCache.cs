@@ -79,7 +79,7 @@ public class ItemSpawnCache : MonoBehaviour
 
         // Supondo que BancoDeDados tenha uma instância ou método estático para acesso
         BancoDeDados bancoDeDados = new BancoDeDados();
-        int[] InventarioPlayer = bancoDeDados.LerInventario(playerId);
+        int[] InventarioPlayer = bancoDeDados.GetPlayerInventory(playerId);
 
         bool itemAdicionado = false;
 
@@ -89,7 +89,7 @@ public class ItemSpawnCache : MonoBehaviour
             {
                 InventarioPlayer[i] = itemSpawnId;
                 itemAdicionado = true;
-                bancoDeDados.SalvarInventario(playerId, InventarioPlayer);
+                bancoDeDados.SetPlayerInventory(playerId, InventarioPlayer);
                 PanelItemRecebido();
                 //Debug.Log($"Item com ID {itemSpawnId} adicionado ao slot {i}.");
                 break; // Sai do loop após adicionar o item

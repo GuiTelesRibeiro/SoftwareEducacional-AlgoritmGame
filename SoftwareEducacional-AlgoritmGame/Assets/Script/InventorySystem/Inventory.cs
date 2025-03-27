@@ -200,7 +200,7 @@ public class Inventory : MonoBehaviour
             return;
         }
         BancoDeDados bancoDeDados = new BancoDeDados();
-        bancoDeDados.SalvarInventario(ID, ItensList);
+        bancoDeDados.SetPlayerInventory(ID, ItensList);
         //UpdateInterface();
     }
     public int[] GetInventoryBanco(int ID)
@@ -212,7 +212,7 @@ public class Inventory : MonoBehaviour
             return null;
         }
         BancoDeDados bancoDeDados = new BancoDeDados();
-        itensList = bancoDeDados.LerInventario(ID);
+        itensList = bancoDeDados.GetPlayerInventory(ID);
         return itensList;
     }
 
@@ -261,7 +261,7 @@ public class Inventory : MonoBehaviour
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
         bool isPlayerExist;
-        var dados = bancoDeDados.LerPlayer(playerId);
+        var dados = bancoDeDados.ReadPlayer(playerId);
 
         if (dados.Read())
         {
@@ -275,14 +275,14 @@ public class Inventory : MonoBehaviour
             isPlayerExist = false;
         }
         dados.Close();
-        bancoDeDados.FecharConexao();
+        bancoDeDados.CloseDatabase();
         return isPlayerExist;
     }
-    public void ResetMissaoPlayer()
+    public void ResetMissaoPlayer_()
     {
-        BancoDeDados bancoDeDados = new BancoDeDados();
-        bancoDeDados.SetIsMissionComplete(1, 1, 0);
-        bancoDeDados.SetIsItemDelivered(1, 1, 0);
+        //BancoDeDados bancoDeDados = new BancoDeDados();
+        //bancoDeDados.SetIsMissionComplete(1, 1, 0);
+        //bancoDeDados.SetIsItemDelivered(1, 1, 0);
 
     }
 }

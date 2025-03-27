@@ -13,6 +13,7 @@ public class MenuCanvasController : MonoBehaviour
     [SerializeField] GameObject menuPainel;
     [SerializeField] GameObject updateDataPainel;
     [SerializeField] GameObject resetAlert;
+    [SerializeField] int idPlayer;
     [SerializeField] string nomeDaCenadoJogo;
     [SerializeField] string nomeDaCenadaIntroducao;
 
@@ -38,12 +39,12 @@ public class MenuCanvasController : MonoBehaviour
     public bool ExistAccount()
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
-        var dados = bancoDeDados.LerPlayer(1); // Passa o ID 1 para buscar no banco de dados.
+        var dados = bancoDeDados.ReadPlayer(idPlayer); // Passa o ID 1 para buscar no banco de dados.
 
         bool existe = dados.Read(); // Se houver registros, retorna true.
 
         dados.Close(); // Fecha o leitor para liberar recursos.
-        bancoDeDados.FecharConexao(); // Fecha a conexão com o banco de dados.
+        bancoDeDados.CloseDatabase(); // Fecha a conexão com o banco de dados.
         return existe;
     }
 
@@ -75,7 +76,7 @@ public class MenuCanvasController : MonoBehaviour
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
         bancoDeDados.DeletePlayerById(playerId);
-        bancoDeDados.DeletarPlayerMissoes(playerId); 
+        bancoDeDados.DeleteAttemptByPlayer(playerId);
 
         OpenMenu();
     }

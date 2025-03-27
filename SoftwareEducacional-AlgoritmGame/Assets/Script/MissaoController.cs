@@ -4,13 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Numerics;
 
 public class MissaoController : MonoBehaviour
 {
-    [SerializeField] GameObject missoesPanel; 
+    [SerializeField] GameObject missoesPanel;
     [SerializeField] GameObject missaoPanel;
     [SerializeField] Image spriteItem;
     [SerializeField] TMP_Text nomeMissao;
+    [SerializeField] string textNomeMisao = "Altere o nome da missao";
     [SerializeField] TMP_Text descricaoMissao;
     [SerializeField] int PlayerID;
     [SerializeField] int ultimaMissaoAberta;
@@ -29,7 +31,7 @@ public class MissaoController : MonoBehaviour
     public void UpdateMaiorPlayerMissionCompleta()
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
-        MaiorPlayerMissionCompleta = bancoDeDados.GetMaiorIDMissao(PlayerID);
+        MaiorPlayerMissionCompleta = bancoDeDados.GetHighestSuccessfulLevelId(PlayerID);
     }
 
     public void ObrirMissaoPanel(int missionID)
@@ -49,12 +51,12 @@ public class MissaoController : MonoBehaviour
     public void InfoMissionUpdate(int missionID)
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
-        int idItemRecompensa = bancoDeDados.GetMissaoIdItem(missionID);
+        int idItemRecompensa = bancoDeDados.GetLevelItemToReceive(missionID);
         //Debug.Log($"{idItemRecompensa}");
         Item item = Inventory.Singleton.allItemsList[idItemRecompensa -1];
         spriteItem.sprite = item.sprite;
-        nomeMissao.text = bancoDeDados.GetMissionName(missionID);
-        descricaoMissao.text =bancoDeDados.GetMissaoDescricao(missionID);
+        nomeMissao.text = textNomeMisao;
+        descricaoMissao.text =bancoDeDados.GetLevelDescription(missionID);
 
     }
     public void IrParaMissao()

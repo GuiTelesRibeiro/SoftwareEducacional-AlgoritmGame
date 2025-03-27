@@ -17,7 +17,7 @@ public class PlayerInfoDisplay : MonoBehaviour
     // Método para buscar informações do jogador pelo ID
     public void DisplayPlayerInfo(int playerId)
     {
-        var dados = bancoDeDados.LerPlayer(playerId);
+        var dados = bancoDeDados.ReadPlayer(playerId);
 
         if (dados.Read())
         {
@@ -33,6 +33,6 @@ public class PlayerInfoDisplay : MonoBehaviour
         }
 
         dados.Close();
-        bancoDeDados.FecharConexao();
+        bancoDeDados.CloseDatabase();
     }
 }

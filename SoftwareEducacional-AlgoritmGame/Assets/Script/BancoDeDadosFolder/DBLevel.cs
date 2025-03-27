@@ -111,4 +111,14 @@ public class DBLevel
             return default;
         }
     }
+    public void CloseDatabase()
+    {
+        if (BancoDados != null && BancoDados.State != ConnectionState.Closed)
+        {
+            BancoDados.Close();
+            BancoDados = null; // Libera o recurso para evitar vazamentos
+            Debug.Log("Banco de dados fechado com sucesso.");
+        }
+    }
+
 }

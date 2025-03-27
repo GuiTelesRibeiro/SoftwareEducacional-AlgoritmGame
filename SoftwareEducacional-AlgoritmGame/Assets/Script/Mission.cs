@@ -28,7 +28,7 @@ public class Mission : MonoBehaviour
     public void Interaction()
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
-        int[] itensDoInventario = bancoDeDados.LerInventario(idPlayer);
+        int[] itensDoInventario = bancoDeDados.GetPlayerInventory(idPlayer);
 
         if (itensDoInventario == null)
         {
@@ -53,12 +53,8 @@ public class Mission : MonoBehaviour
     bool MissionState()
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
-        if (bancoDeDados.GetIsItemDelivered(idPlayer, idMission) == 1)
-        {
-            return true;
-        }
 
-        return false;
+        return bancoDeDados.GetIsItemDelivered(idPlayer, idMission);
     }
 
     bool HaveItemInInventory(int[] itensDoInventario)
@@ -71,8 +67,8 @@ public class Mission : MonoBehaviour
                 BancoDeDados bancoDeDados = new BancoDeDados();
                 Debug.Log($" interaction2 : {itensDoInventario[0]},{itensDoInventario[1]},{itensDoInventario[2]},{itensDoInventario[3]},{itensDoInventario[4]},{itensDoInventario[5]},{itensDoInventario[6]},{itensDoInventario[7]},{itensDoInventario[8]}");
 
-                bancoDeDados.SalvarInventario(idPlayer, itensDoInventario);
-                bancoDeDados.SetIsItemDelivered(idPlayer, idMission, 1);
+                bancoDeDados.SetPlayerInventory(idPlayer, itensDoInventario);
+                bancoDeDados.SetItemDelivered(idPlayer, idMission);
 
                 return true;
             }

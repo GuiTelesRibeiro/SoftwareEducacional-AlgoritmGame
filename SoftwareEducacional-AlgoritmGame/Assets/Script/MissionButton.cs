@@ -21,7 +21,7 @@ public class MissionButton : MonoBehaviour
     private void Start()
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
-        spriteItem.sprite = Inventory.Singleton.allItemsList[bancoDeDados.GetMissaoIdItem(MissionID)-1].sprite;
+        spriteItem.sprite = Inventory.Singleton.allItemsList[bancoDeDados.GetLevelItemToReceive(MissionID)-1].sprite;
     }
     // Update is called once per frame
     void UpdateState()
