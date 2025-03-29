@@ -37,7 +37,13 @@ public class PuzzleCanvasController : MonoBehaviour
         }
         imageItem.sprite = allListItem[bancoDeDados.GetMissaoIdItem(IdMissao)-1].sprite;
 
-        // iniciar Attempt 
+
+        // (Feito )pegar informações do Level por meio do id Missao: (Usando dicionario pra pegar logo todas as informaçoes e alocando em uma variacel externa)
+        // (Feito)iniciar Attempt
+        // (Feito)definir Id da tentativa atual
+        // (Nao Feito)Iniciar a contagem e atualizaçao dos seus dados tentativa atual
+        // (Nao feito )ao errar salvar os dados, criar nova tentativa,
+        // (Nao feito )Ao acertar salvar os dados, definir id tentativa como -1
     }
     void Start()
     {
@@ -48,6 +54,8 @@ public class PuzzleCanvasController : MonoBehaviour
 
         OpenTutorialPanel();
     }
+
+    
 
     public void ResetPanels()
     {

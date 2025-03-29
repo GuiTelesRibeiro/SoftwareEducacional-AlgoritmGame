@@ -83,6 +83,35 @@ public class DBLevel
         BancoDados.Close();
     }
 
+    public Dictionary<string, object> GetLevelById(int id_level)
+    {
+        var dados = new Dictionary<string, object>(); 
+
+        var BancoDados = criarEAbrirBancoDeDados();
+        using (var comando = BancoDados.CreateCommand())
+        {
+            comando.CommandText = "SELECT * FROM Level WHERE id_level = @id_level;";
+            comando.Parameters.Add(new SqliteParameter("@id_level", id_level));
+
+            using (var reader = comando.ExecuteReader())
+            {
+                if (reader.Read()) 
+                {
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        string columnName = reader.GetName(i); 
+                        object value = reader.GetValue(i); 
+                        dados[columnName] = value;
+                    }
+                }
+            }
+        }
+        BancoDados.Close();
+
+        return dados; // Retorna o dicionário com os dados
+    }
+
+
     public int GetLevel_Id_Item_To_Recive(int id_level)
     {
         return GetValue<int>("id_item_to_recive", id_level);
