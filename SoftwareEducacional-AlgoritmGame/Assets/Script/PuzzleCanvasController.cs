@@ -16,7 +16,7 @@ public class PuzzleCanvasController : MonoBehaviour
     [SerializeField] GameObject UiPanel;
     public int Tentativas;
     [SerializeField] int IdPlayer;
-    [SerializeField] int IdMissao;
+    [SerializeField] int IdLevel;
     [SerializeField] bool playTutorial;
     public int Move_To_Complete;
     [SerializeField] public Image imageItem;
@@ -25,22 +25,26 @@ public class PuzzleCanvasController : MonoBehaviour
     [SerializeField] AudioSource Sucess;
     [SerializeField] AudioSource Error;
 
+    int IdToItemToRecive;
+
     // Start is called before the first frame update
     private void Awake()
     {
-        Tentativas = 0;
-        BancoDeDados bancoDeDados = new BancoDeDados();
-        if (!bancoDeDados.VerificarPlayerMissaoExiste(IdPlayer, IdMissao))
-        {
-            Debug.Log("PlayerMissao Nao existe ainda");
-            bancoDeDados.CriarPlayerMissao(IdPlayer, IdMissao);
-        }
-        imageItem.sprite = allListItem[bancoDeDados.GetMissaoIdItem(IdMissao)-1].sprite;
+        GetLevelById(IdLevel);
+        
+        //Tentativas = 0;
+        //BancoDeDados bancoDeDados = new BancoDeDados();
+        //if (!bancoDeDados.VerificarPlayerMissaoExiste(IdPlayer, IdLevel))
+        //{
+        //    Debug.Log("PlayerMissao Nao existe ainda");
+        //    bancoDeDados.CriarPlayerMissao(IdPlayer, IdLevel);
+        //}
+        imageItem.sprite = allListItem[IdToItemToRecive - 1].sprite;
 
 
-        // (Feito )pegar informações do Level por meio do id Missao: (Usando dicionario pra pegar logo todas as informaçoes e alocando em uma variacel externa)
-        // (Feito)iniciar Attempt
-        // (Feito)definir Id da tentativa atual
+        // (Nao Feito )pegar informações do Level por meio do id Missao: (Usando dicionario pra pegar logo todas as informaçoes e alocando em uma variacel externa)
+        // (Nao feito)iniciar Attempt
+        // (Nao feito)definir Id da tentativa atual
         // (Nao Feito)Iniciar a contagem e atualizaçao dos seus dados tentativa atual
         // (Nao feito )ao errar salvar os dados, criar nova tentativa,
         // (Nao feito )Ao acertar salvar os dados, definir id tentativa como -1
@@ -54,9 +58,56 @@ public class PuzzleCanvasController : MonoBehaviour
 
         OpenTutorialPanel();
     }
+    public void SaveTentativas()
+    {
+        BancoDeDados bancoDeDados = new BancoDeDados();
+        int tempTentativas = Tentativas;
+        Tentativas = 0;
+        tempTentativas += bancoDeDados.GetNumber_Attempts(IdPlayer, IdLevel);
+        bancoDeDados.SetNumber_Attempts(IdPlayer,IdLevel, tempTentativas);
+    }
 
-    
+    void GetLevelById(int id_level){
+        BancoDeDados bancoDeDados = new BancoDeDados();
+       
+        var levelData = bancoDeDados.GetLevelById(id_level);
 
+        if (levelData.Count > 0)
+        {
+            Debug.Log("ID: " + levelData["id_level"]);
+            Debug.Log("Item recebido: " + levelData["id_item_to_recive"]);
+            Debug.Log("Descrição: " + levelData["level_description"]);
+
+            IdToItemToRecive = (int)levelData["id_item_to_recive"];
+
+        }
+        else
+        {
+            Debug.Log("Nenhum nível encontrado com esse ID.");
+        }
+    }
+
+    public void SaveMissionComplete()
+    {
+        BancoDeDados bancoDeDados = new BancoDeDados();
+        Tentativas += 1;
+        SaveTentativas();
+        //Debug.Log("SveMission");
+        if (bancoDeDados.GetIsMissionComplete(IdPlayer,IdLevel)==1)
+        {
+            if (Move_To_Complete < bancoDeDados.GetMove_To_Complete(IdPlayer,IdLevel))
+            {
+                bancoDeDados.SetMove_To_Complete(IdPlayer, IdLevel, Move_To_Complete);
+                Debug.Log($"{Move_To_Complete}");
+            }
+                return;
+        }
+        itemSpawnCache.itemSpawnId = bancoDeDados.GetMissaoIdItem(IdLevel);
+        //Debug.Log($"{Move_To_Complete}");
+        bancoDeDados.SetIsMissionComplete(IdPlayer, IdLevel, 1);
+        bancoDeDados.SetMove_To_Complete(IdPlayer,IdLevel, Move_To_Complete);
+
+    }
     public void ResetPanels()
     {
         SaveTentativas();
@@ -81,36 +132,6 @@ public class PuzzleCanvasController : MonoBehaviour
         ResetPanels();
         SaveMissionComplete();
         victoryPanel.SetActive(true);
-    }
-    public void SaveTentativas()
-    {
-        BancoDeDados bancoDeDados = new BancoDeDados();
-        int tempTentativas = Tentativas;
-        Tentativas = 0;
-        tempTentativas += bancoDeDados.GetNumber_Attempts(IdPlayer, IdMissao);
-        bancoDeDados.SetNumber_Attempts(IdPlayer,IdMissao, tempTentativas);
-    }
-
-    public void SaveMissionComplete()
-    {
-        BancoDeDados bancoDeDados = new BancoDeDados();
-        Tentativas += 1;
-        SaveTentativas();
-        //Debug.Log("SveMission");
-        if (bancoDeDados.GetIsMissionComplete(IdPlayer,IdMissao)==1)
-        {
-            if (Move_To_Complete < bancoDeDados.GetMove_To_Complete(IdPlayer,IdMissao))
-            {
-                bancoDeDados.SetMove_To_Complete(IdPlayer, IdMissao, Move_To_Complete);
-                Debug.Log($"{Move_To_Complete}");
-            }
-                return;
-        }
-        itemSpawnCache.itemSpawnId = bancoDeDados.GetMissaoIdItem(IdMissao);
-        //Debug.Log($"{Move_To_Complete}");
-        bancoDeDados.SetIsMissionComplete(IdPlayer, IdMissao, 1);
-        bancoDeDados.SetMove_To_Complete(IdPlayer,IdMissao, Move_To_Complete);
-
     }
     public void OpenLosePanel()
     {

@@ -68,12 +68,18 @@ public class BancoDeDados
         return dbPlayer.GetIsItemDelivered(id_player, id_item_to_delivered);
     }
 
+
+
     // Métodos relacionados a Level
     public void SetLevelData(int id_level, int id_item_to_recive, string level_description)
     {
         dbLevel.SetLevelData(id_level, id_item_to_recive, level_description);
     }
 
+    public Dictionary<string, object> GetLevelById(int id_level)
+    {
+        return dbLevel.GetLevelById(id_level);
+    }
     public int GetLevelItemToReceive(int id_level)
     {
         return dbLevel.GetLevel_Id_Item_To_Recive(id_level);
@@ -87,6 +93,9 @@ public class BancoDeDados
     {
         return dbAttempt.GetHighestSuccessfulLevelId(playerId);
     }
+
+
+
     // Métodos relacionados a Attempt
     public void SetAttemptData(int id_player, int id_missao, bool is_first_attempt, int number_of_commands, int time_to_recive, bool is_failed_attempts, DateTime time_data)
     {
