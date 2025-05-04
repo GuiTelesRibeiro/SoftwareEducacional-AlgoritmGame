@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public class PuzzleCanvasController : MonoBehaviour
 {
 
+    [SerializeField] PlayerController playerController;
+
     [SerializeField] GameObject victoryPanel;
 
     [SerializeField] GameObject losePanel;
@@ -14,11 +16,22 @@ public class PuzzleCanvasController : MonoBehaviour
     [SerializeField] GameObject puzzlePainel;
     [SerializeField] GameObject optionsPanel;
     [SerializeField] GameObject UiPanel;
+
     public int Tentativas;
-    [SerializeField] int IdPlayer;
-    [SerializeField] int IdLevel;
+    [SerializeField] int idPlayer;
+    // -------------------------------- Level DATA
+    [SerializeField] int idLevel;
+    [SerializeField] int id_item_to_recive;
+    [SerializeField] int level_description;
+
+    //---------------------------------Attempt DATA
+    int lastIdAtempt;
     [SerializeField] bool playTutorial;
-    public int Move_To_Complete;
+    float startTime;
+    bool isResetTime;
+    int secondsToSolve;
+
+    public int numberOfCommands;
     [SerializeField] public Image imageItem;
     [SerializeField] Item[] allListItem;
     [SerializeField] ItemSpawnCache itemSpawnCache;
@@ -30,24 +43,23 @@ public class PuzzleCanvasController : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        GetLevelById(IdLevel);
+        GetLevelById(idLevel);
         
         //Tentativas = 0;
-        //BancoDeDados bancoDeDados = new BancoDeDados();
-        //if (!bancoDeDados.VerificarPlayerMissaoExiste(IdPlayer, IdLevel))
+        BancoDeDados bancoDeDados = new BancoDeDados();
+        bancoDeDados.InitializeDatabase();
+        //if (!bancoDeDados.VerificarPlayerMissaoExiste(idPlayer, idLevel))
         //{
         //    Debug.Log("PlayerMissao Nao existe ainda");
-        //    bancoDeDados.CriarPlayerMissao(IdPlayer, IdLevel);
+        //    bancoDeDados.CriarPlayerMissao(idPlayer, idLevel);
         //}
         imageItem.sprite = allListItem[IdToItemToRecive - 1].sprite;
-
-
-        // (Nao Feito )pegar informações do Level por meio do id Missao: (Usando dicionario pra pegar logo todas as informaçoes e alocando em uma variacel externa)
-        // (Nao feito)iniciar Attempt
-        // (Nao feito)definir Id da tentativa atual
-        // (Nao Feito)Iniciar a contagem e atualizaçao dos seus dados tentativa atual
-        // (Nao feito )ao errar salvar os dados, criar nova tentativa,
-        // (Nao feito )Ao acertar salvar os dados, definir id tentativa como -1
+        // pegar informações do Level por meio do id Missao: (Usando dicionario pra pegar logo todas as informaçoes e alocando em uma variacvel externa)
+        // iniciar Attempt
+        // (definir Id da tentativa atual
+        // Iniciar a contagem e atualizaçao dos seus dados tentativa atual
+        // ao errar salvar os dados, criar nova tentativa,
+        // Ao acertar salvar os dados, definir id tentativa como -1
     }
     void Start()
     {
@@ -58,18 +70,10 @@ public class PuzzleCanvasController : MonoBehaviour
 
         OpenTutorialPanel();
     }
-    public void SaveTentativas()
-    {
-        BancoDeDados bancoDeDados = new BancoDeDados();
-        int tempTentativas = Tentativas;
-        Tentativas = 0;
-        tempTentativas += bancoDeDados.GetNumber_Attempts(IdPlayer, IdLevel);
-        bancoDeDados.SetNumber_Attempts(IdPlayer,IdLevel, tempTentativas);
-    }
 
     void GetLevelById(int id_level){
         BancoDeDados bancoDeDados = new BancoDeDados();
-       
+       bancoDeDados.InitializeDatabase();
         var levelData = bancoDeDados.GetLevelById(id_level);
 
         if (levelData.Count > 0)
@@ -87,30 +91,35 @@ public class PuzzleCanvasController : MonoBehaviour
         }
     }
 
-    public void SaveMissionComplete()
+    public void SaveAttempt(bool is_failed_attempts)
     {
         BancoDeDados bancoDeDados = new BancoDeDados();
-        Tentativas += 1;
-        SaveTentativas();
-        //Debug.Log("SveMission");
-        if (bancoDeDados.GetIsMissionComplete(IdPlayer,IdLevel)==1)
+        numberOfCommands = playerController.numberOfCommands();
+        lastIdAtempt = bancoDeDados.SetAttemptData(idPlayer, idLevel, numberOfCommands, secondsToSolve, is_failed_attempts);
+        if (bancoDeDados.IsFirstComplete(idPlayer, idLevel))
         {
-            if (Move_To_Complete < bancoDeDados.GetMove_To_Complete(IdPlayer,IdLevel))
-            {
-                bancoDeDados.SetMove_To_Complete(IdPlayer, IdLevel, Move_To_Complete);
-                Debug.Log($"{Move_To_Complete}");
-            }
-                return;
+            itemSpawnCache.itemSpawnId = IdToItemToRecive;
         }
-        itemSpawnCache.itemSpawnId = bancoDeDados.GetMissaoIdItem(IdLevel);
-        //Debug.Log($"{Move_To_Complete}");
-        bancoDeDados.SetIsMissionComplete(IdPlayer, IdLevel, 1);
-        bancoDeDados.SetMove_To_Complete(IdPlayer,IdLevel, Move_To_Complete);
-
     }
+    public void StartTimeCount()
+    {
+        if (isResetTime == true)
+        {
+            startTime = Time.time; // Marca o tempo inicial em segundos desde o início do jogo
+            isResetTime = false;
+        }
+    }
+
+    public void StopTimeCount()
+    {
+        float tempoTotal = Time.time - startTime; // Tempo decorrido em segundos
+        secondsToSolve = Mathf.RoundToInt(tempoTotal); // Armazena como inteiro (segundos)
+        isResetTime = true;
+    }
+
+
     public void ResetPanels()
     {
-        SaveTentativas();
         victoryPanel.SetActive(false); 
         losePanel.SetActive(false);
         tutorialPanel.SetActive(false);
@@ -121,6 +130,7 @@ public class PuzzleCanvasController : MonoBehaviour
     
     public void DefaultPanels()
     {
+        StartTimeCount();
         ResetPanels();
         puzzlePainel.SetActive(true);
         UiPanel.SetActive(true);
@@ -130,17 +140,19 @@ public class PuzzleCanvasController : MonoBehaviour
     {
         Sucess.Play();
         ResetPanels();
-        SaveMissionComplete();
+        SaveAttempt( false);
         victoryPanel.SetActive(true);
     }
     public void OpenLosePanel()
     {
         Error.Play();
         ResetPanels();
+        SaveAttempt( true);
         losePanel.SetActive(true);
     }
     public void OpenTutorialPanel()
     {
+
         ResetPanels();
         tutorialPanel.SetActive(true);
     }
@@ -153,7 +165,6 @@ public class PuzzleCanvasController : MonoBehaviour
 
     public void SwitchScennes(string sceneName)
     {
-        SaveTentativas();
         if (SceneManager.GetSceneByName(sceneName) != null)
         {
             SceneManager.LoadScene(sceneName);

@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.XR;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,6 +20,9 @@ public class PlayerController : MonoBehaviour
     private Coroutine currentExecution;
     private bool objectiveReached = false;
     [SerializeField] PuzzleCanvasController controller;
+
+    int DirectionReference = 0;
+
 
 
     void Start()
@@ -40,9 +46,10 @@ public class PlayerController : MonoBehaviour
 
     public void StartExecutingActions()
     {
+        DirectionReference = 0;
         actionQueue.Clear();
 
-        foreach (var action in puzzleController.listAction)
+        foreach (var action in puzzleController.listAllActions())
         {
             if (!string.IsNullOrEmpty(action))
             {
@@ -53,6 +60,7 @@ public class PlayerController : MonoBehaviour
         if (!isExecutingActions)
         {
             puzzleController.ToggleButtons(false); // Desativa os botões
+            controller.StopTimeCount();
             currentExecution = StartCoroutine(ExecuteActions());
         }
     }
@@ -80,7 +88,6 @@ public class PlayerController : MonoBehaviour
         if (!objectiveReached)
         {
             ResetPosition();
-            controller.Tentativas += 1;
             controller.OpenLosePanel();
             Debug.Log("Perdeu");
         }
@@ -99,19 +106,60 @@ public class PlayerController : MonoBehaviour
     {
         if (action == "Up")
         {
-            Move(Vector3Int.up); // Move 1 unidade inteira para cima
+            Move(Vector3Int.up);
         }
         else if (action == "Down")
         {
-            Move(Vector3Int.down); // Move 1 unidade inteira para baixo
+            Move(Vector3Int.down);
         }
         else if (action == "Left")
         {
-            Move(Vector3Int.left); // Move 1 unidade inteira para a esquerda
+            Move(Vector3Int.left);
         }
         else if (action == "Right")
         {
-            Move(Vector3Int.right); // Move 1 unidade inteira para a direita
+            Move(Vector3Int.right);
+        }
+        else if (action == "Clockwise")
+        {
+            DirectionReference++;
+            DirectionReference= NormalizeDirection(DirectionReference);
+
+        }
+        else if (action == "Counterclockwise")
+        {
+            DirectionReference--;
+            DirectionReference = NormalizeDirection(DirectionReference);
+        }
+        else if (action == "forward")
+        {
+            MoveForward(); // Move na direção atual
+        }
+    }
+    private int NormalizeDirection(int dir)
+    {
+        // Converte números negativos e positivos para o intervalo 0-3
+        dir = dir % 4;
+        return dir < 0 ? dir + 4 : dir;
+    }
+
+    private void MoveForward()
+    {
+        if (DirectionReference == 0)
+        {
+            Move(Vector3Int.up);
+        }
+        else if (DirectionReference == 2)
+        {
+            Move(Vector3Int.down);
+        }
+        else if (DirectionReference == 3)
+        {
+            Move(Vector3Int.left);
+        }
+        else if (DirectionReference == 1)
+        {
+            Move(Vector3Int.right);
         }
     }
 
@@ -136,7 +184,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public void StopExecutingActions()
-    {
+    {   
         if (currentExecution != null)
         {
             StopCoroutine(currentExecution); // Interrompe a execução
@@ -146,18 +194,20 @@ public class PlayerController : MonoBehaviour
         isExecutingActions = false;
         puzzleController.ToggleButtons(true); // Reativa os botões
         actionQueue.Clear(); // Limpa a fila de ações
+        controller.DefaultPanels();
     }
 
-    void SetMove_To_complete()
+    public int numberOfCommands()
     {
-        controller.Move_To_Complete = 0;
-        for (int i= puzzleController.listAction.Length; i>0; i--)
+        int numberOfCommand = 0;
+        foreach (var action in puzzleController.listActionF1)
         {
-            if (puzzleController.listAction[i-1]!= null)
+            if (!string.IsNullOrEmpty(action))
             {
-                controller.Move_To_Complete += 1;
+                numberOfCommand++;
             }
         }
+        return numberOfCommand;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -166,8 +216,7 @@ public class PlayerController : MonoBehaviour
         if ((Objective.value & (1 << collision.gameObject.layer)) != 0)
         {
             objectiveReached = true;
-            StopExecutingActions();
-            SetMove_To_complete();
+            StopExecutingActions(); 
             //Debug.Log("Objetivo alcançado por colisão!");
             controller.OpenVictoryPanel();
             ResetPosition();

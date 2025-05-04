@@ -31,7 +31,7 @@ public class Inventory : MonoBehaviour
         {
             return;
         }
-        carriedItem.transform.position = Input.mousePosition;
+        carriedItem.transform.positionF1 = Input.mousePosition;
     }
 
     public void SetCarriedItem(InventoryItem item)

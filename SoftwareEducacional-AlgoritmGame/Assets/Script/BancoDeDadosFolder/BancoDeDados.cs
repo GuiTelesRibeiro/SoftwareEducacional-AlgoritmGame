@@ -97,9 +97,14 @@ public class BancoDeDados
 
 
     // Métodos relacionados a Attempt
-    public void SetAttemptData(int id_player, int id_missao, bool is_first_attempt, int number_of_commands, int time_to_recive, bool is_failed_attempts, DateTime time_data)
+
+    public bool IsFirstComplete(int idPlayer, int idLevel)
     {
-        dbAttempt.SetAttemptData(id_player,  id_missao,  is_first_attempt,  number_of_commands,  time_to_recive,  is_failed_attempts, time_data);
+        return dbAttempt.IsFirstComplete(idPlayer, idLevel);
+    }
+    public int SetAttemptData(int id_player, int id_level, int number_of_commands, int seconds_to_solve, bool is_failed_attempts)
+    {
+        return dbAttempt.SetAttemptData(id_player,  id_level,  number_of_commands,  seconds_to_solve,  is_failed_attempts);
     }
 
     public int GetAttemptPlayerId(int id_attempt )
@@ -112,19 +117,13 @@ public class BancoDeDados
         return dbAttempt.GetAttempt_Id_Missao(id_attempt );
     }
 
-    public bool GetAttemptIsFirst(int id_attempt )
-    {
-        return dbAttempt.GetAttempt_Is_First_Attempt(id_attempt );
-    }
-
     public int GetAttemptNumberOfCommands(int id_attempt )
     {
         return dbAttempt.GetAttempt_Number_Of_Commands(id_attempt );
     }
 
-    public int GetAttemptTimeToReceive(int id_attempt )
-    {
-        return dbAttempt.GetAttempt_Time_To_Recive(id_attempt );
+    public int GetAttemptSecondsToSolve(int id_attempt) { 
+        return dbAttempt.GetAttempt_Seconds_To_Solve(id_attempt );
     }
 
     public bool GetAttemptIsFailed(int id_attempt )
@@ -155,57 +154,5 @@ public class BancoDeDados
         dbPlayer.CloseDatabase();
         dbLevel.CloseDatabase();
         dbAttempt.CloseDatabase();
-    }
-
-    //----------------------------------------------------
-    //funcoes para resolver
-
-    public int GetNumber_Attempts( int IdPlayer, int IdMissao)
-    {
-        return 1;
-    }
-
-    public void SetNumber_Attempts( int IdPlayer, int IdMissao, int tempTentativas)
-    {
-
-    }
-
-    public int GetIsMissionComplete( int IdPlayer, int IdMissao)
-    {
-        return 1;
-    }
-
-    public int GetMove_To_Complete(int IdPlayer, int IdMissao)
-    {
-        return 1;
-    }
-
-    public void  SetMove_To_Complete( int IdPlayer, int IdMissao, int Move_To_Complete)
-    {
-
-    }
-
-    public int GetMissaoIdItem( int IdMissao) // ver o que faz 
-    {
-        return 1;
-    }
-    public void SetMissaoIdItem( int IdMissao) // ver  o que faz 
-    {
-
-    }
-
-    public void SetIsMissionComplete (int aa, int bb, int cc)// ver o que faz
-    {
-
-    }
-
-    public bool VerificarPlayerMissaoExiste(int IdPlayer, int IdMissao) // alterar funcionamento 
-    {
-        return true;
-    }
-
-    public void CriarPlayerMissao(int IdPlayer, int IdMissao)// Attenmpt 
-    {
-
     }
 }
