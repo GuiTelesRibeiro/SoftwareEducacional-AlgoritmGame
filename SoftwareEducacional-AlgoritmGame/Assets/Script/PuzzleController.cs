@@ -7,6 +7,10 @@ public class PuzzleController : MonoBehaviour
     [SerializeField] private Button[] actionsButtons; // Botões de ações disponíveis
     [SerializeField] private SlotActionsButton[] slotButtonsF1; // Referência para os botões de slots
     [SerializeField] private SlotActionsButton[] slotButtonsF2; // Referência para os botões de slots
+
+    [SerializeField] private Image backgoundImageF1;
+    [SerializeField] private Image backgoundImageF2;
+
     [SerializeField] private Sprite upSprite;
     [SerializeField] private Sprite downSprite;
     [SerializeField] private Sprite leftSprite;
@@ -29,6 +33,7 @@ public class PuzzleController : MonoBehaviour
 
     private void Start()
     {
+        SwitchCollorToSelectedFunction();
         // Inicializa o dicionário de ações e sprites
         actionSpriteMap = new Dictionary<string, Sprite>
         {
@@ -155,7 +160,35 @@ public class PuzzleController : MonoBehaviour
     public void OnClickSwitchButton()
     {
         numberFunctionIsSelected = (numberFunctionIsSelected == 1) ? 2 : 1;
+        SwitchCollorToSelectedFunction();
     }
+    private void SwitchCollorToSelectedFunction()
+    {
+
+        Color selectedColor = HexToColor("FC8F54");
+        Color deselectedColor = HexToColor("555567");
+
+        if (numberFunctionIsSelected == 1)
+        {
+            backgoundImageF1.color = selectedColor;
+            backgoundImageF2.color = deselectedColor;
+        }
+        else if (numberFunctionIsSelected == 2)
+        {
+            backgoundImageF1.color = deselectedColor;
+            backgoundImageF2.color = selectedColor;
+        }
+    }
+    private Color HexToColor(string hex)
+    {
+        Color color;
+        if (ColorUtility.TryParseHtmlString("#" + hex, out color))
+        {
+            return color;
+        }
+        return Color.white; // fallback
+    }
+
     private Sprite GetActionSprite(string action)
     {
         if (actionSpriteMap.TryGetValue(action, out Sprite sprite))
@@ -175,6 +208,10 @@ public class PuzzleController : MonoBehaviour
         }
 
         foreach (var slot in slotButtonsF1)
+        {
+            slot.GetComponent<Button>().interactable = state; // Ativa ou desativa os botões de slot
+        }
+        foreach (var slot in slotButtonsF2)
         {
             slot.GetComponent<Button>().interactable = state; // Ativa ou desativa os botões de slot
         }
