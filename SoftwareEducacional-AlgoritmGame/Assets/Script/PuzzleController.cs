@@ -21,7 +21,7 @@ public class PuzzleController : MonoBehaviour
     private int positionF2 = 0; // Índice para o próximo slot
     public string[] listActionF1; // Lista para armazenar as ações da funcao 1
     public string[] listActionF2; // Lista para armazenar as ações da funcao 2
-    public bool ThisLevelUsingF2;
+    [SerializeField] bool ThisLevelUsingF2;
     public int numberFunctionIsSelected = 1;
 
     [SerializeField] private int maxIterations = 1000; // Limite máximo de iterações totais
@@ -45,66 +45,44 @@ public class PuzzleController : MonoBehaviour
 
         // Inicializa a lista com o mesmo tamanho dos botões de slot
         listActionF1 = new string[slotButtonsF1.Length];
-        listActionF2 = new string[slotButtonsF2.Length];
+        if(ThisLevelUsingF2)
+            listActionF2 = new string[slotButtonsF2.Length];
     }
 
     public string[] listAllActions()
     {
         List<string> finalActions = new List<string>();
         int iterationCount = 0;
-        int f1Index = 0;
-        int f2Index = 0;
-        bool processingF1 = true; // Começa processando F1
 
-        // Pilha para controlar qual função estamos processando
-        Stack<bool> functionStack = new Stack<bool>();
-        functionStack.Push(true); // Começa com F1
+        // Pilha contendo: (éF1, índice, profundidade)
+        Stack<(bool, int, int)> stack = new Stack<(bool, int, int)>();
+        stack.Push((true, 0, 0));
 
-        while (functionStack.Count > 0 && iterationCount < maxIterations)
+        while (stack.Count > 0 && iterationCount++ < maxIterations)
         {
-            iterationCount++;
-            bool currentIsF1 = functionStack.Peek();
-            string[] currentFunction = currentIsF1 ? listActionF1 : listActionF2;
-            int currentIndex = currentIsF1 ? f1Index : f2Index;
+            var (isF1, index, depth) = stack.Pop();
+            string[] func = isF1 ? listActionF1 : listActionF2;
 
-            // Se chegou ao final da função atual
-            if (currentIndex >= currentFunction.Length || string.IsNullOrEmpty(currentFunction[currentIndex]))
-            {
-                functionStack.Pop(); // Remove da pilha
-                if (currentIsF1) f1Index = 0; else f2Index = 0; // Reseta o índice
+            if (index >= func.Length || string.IsNullOrEmpty(func[index]))
                 continue;
-            }
 
-            string action = currentFunction[currentIndex];
+            string action = func[index];
 
-            // Atualiza o índice para a próxima ação
-            if (currentIsF1) f1Index++; else f2Index++;
+            // Sempre continua a função atual depois
+            stack.Push((isF1, index + 1, depth));
 
             if (action == "F1")
             {
-                functionStack.Push(true); // Empilha F1
-                f1Index = 0; // Reseta o índice de F1
+                if (depth < 50) stack.Push((true, 0, depth + 1));
             }
             else if (action == "F2" && ThisLevelUsingF2)
             {
-                functionStack.Push(false); // Empilha F2
-                f2Index = 0; // Reseta o índice de F2
+                if (depth < 50) stack.Push((false, 0, depth + 1));
             }
-            else
+            else if (finalActions.Count < 30)
             {
                 finalActions.Add(action);
-                // Limita a lista final a 30 comandos
-                if (finalActions.Count >= 30)
-                {
-                    break;
-                }
             }
-        }
-
-        if (iterationCount >= maxIterations)
-        {
-            Debug.LogWarning("Limite de iterações excedido - possível loop infinito!");
-            return finalActions.ToArray(); // Retorna o que foi possível gerar
         }
 
         return finalActions.ToArray();
